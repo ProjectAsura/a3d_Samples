@@ -26,5 +26,8 @@
     <ClInclude Include="..\framework\include\SampleApp.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
+    <ClInclude Include="..\framework\include\SampleAllocator.h">
+      <Filter>ヘッダー ファイル</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
