@@ -1,0 +1,6 @@
+[submodule "asura-SDK"]
+	path = asura-SDK
+	url = https://github.com/ProjectAsura/asura-SDK
+[submodule "external/imgui"]
+	path = external/imgui
+	url = https://github.com/ocornut/imgui
