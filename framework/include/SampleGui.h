@@ -27,6 +27,12 @@ public:
     //=============================================================================================
     // public variables.
     //=============================================================================================
+    struct TargetViewInfo
+    {
+        uint32_t            ColorCount;
+        a3d::TargetFormat   ColorTargets[8];
+        a3d::TargetFormat   DepthTarget;
+    };
 
     //=============================================================================================
     // public methods.
@@ -45,7 +51,7 @@ public:
     //! @retval true    初期化に成功.
     //! @retval false   初期化に失敗.
     //---------------------------------------------------------------------------------------------
-    bool Init(a3d::IDevice* pDevice, a3d::IFrameBuffer* pFrameBuffer, IApp* pApp);
+    bool Init(a3d::IDevice* pDevice, const TargetViewInfo& info, IApp* pApp);
 
     //---------------------------------------------------------------------------------------------
     //! @brief      終了処理を行います.
@@ -74,12 +80,12 @@ private:
     a3d::IBuffer*               m_pVB[2];               //!< 頂点バッファです.
     a3d::IBuffer*               m_pIB[2];               //!< インデックスバッファです.
     a3d::IBuffer*               m_pConstantBuffer;      //!< 定数バッファです.
-    a3d::IBufferView*           m_pConstantView;        //!< 定数バッファビューです.
+    a3d::IConstantBufferView*   m_pConstantView;        //!< 定数バッファビューです.
     size_t                      m_SizeVB[2];            //!< 頂点バッファのサイズです.
     size_t                      m_SizeIB[2];            //!< インデックスバッファのサイズです.
     a3d::ISampler*              m_pSampler;             //!< サンプラーです.
     a3d::ITexture*              m_pTexture;             //!< テクスチャです.
-    a3d::ITextureView*          m_pTextureView;         //!< テクスチャビューです.
+    a3d::IShaderResourceView*   m_pTextureView;         //!< テクスチャビューです.
     a3d::IDescriptorSetLayout*  m_pDescriptorSetLayout; //!< ディスクリプタレイアウトです.
     a3d::IDescriptorSet*        m_pDescriptorSet;       //!< ディスクリプタセットです.
     a3d::IPipelineState*        m_pPipelineState;       //!< パイプラインステートです.

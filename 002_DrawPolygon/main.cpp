@@ -47,9 +47,8 @@ a3d::IDescriptorSetLayout*  g_pDescriptorSetLayout  = nullptr;  //!< ÉfÉBÉXÉNÉäÉ
 a3d::IPipelineState*        g_pPipelineState        = nullptr;  //!< ÉpÉCÉvÉâÉCÉìÉXÉeÅ[ÉgÇ≈Ç∑.
 a3d::IBuffer*               g_pVertexBuffer         = nullptr;  //!< í∏ì_ÉoÉbÉtÉ@Ç≈Ç∑.
 a3d::ITexture*              g_pColorBuffer[2]       = {};       //!< ÉJÉâÅ[ÉoÉbÉtÉ@Ç≈Ç∑.
-a3d::ITextureView*          g_pColorView[2]         = {};       //!< ÉJÉâÅ[ÉrÉÖÅ[Ç≈Ç∑.
+a3d::IRenderTargetView*     g_pRenderTargetView[2]  = {};       //!< ÉJÉâÅ[ÉrÉÖÅ[Ç≈Ç∑.
 a3d::ICommandList*          g_pCommandList[2]       = {};       //!< ÉRÉ}ÉìÉhÉäÉXÉgÇ≈Ç∑.
-a3d::IFrameBuffer*          g_pFrameBuffer[2]       = {};       //!< ÉtÉåÅ[ÉÄÉoÉbÉtÉ@Ç≈Ç∑.
 a3d::Viewport               g_Viewport              = {};       //!< ÉrÉÖÅ[É|Å[ÉgÇ≈Ç∑.
 a3d::Rect                   g_Scissor               = {};       //!< ÉVÉUÅ[ãÈå`Ç≈Ç∑.
 bool                        g_Prepare               = false;    //!< èÄîıÇ™äÆóπÇµÇΩÇÁtrue.
@@ -153,42 +152,19 @@ bool InitA3D()
         g_pSwapChain->GetBuffer(0, &g_pColorBuffer[0]);
         g_pSwapChain->GetBuffer(1, &g_pColorBuffer[1]);
 
-        a3d::TextureViewDesc viewDesc = {};
+        a3d::TargetViewDesc viewDesc = {};
         viewDesc.Dimension          = a3d::VIEW_DIMENSION_TEXTURE2D;
         viewDesc.Format             = format;
-        viewDesc.TextureAspect      = a3d::TEXTURE_ASPECT_COLOR;
         viewDesc.MipSlice           = 0;
         viewDesc.MipLevels          = desc.MipLevels;
         viewDesc.FirstArraySlice    = 0;
         viewDesc.ArraySize          = 1;
-        viewDesc.ComponentMapping.R = a3d::TEXTURE_SWIZZLE_R;
-        viewDesc.ComponentMapping.G = a3d::TEXTURE_SWIZZLE_G;
-        viewDesc.ComponentMapping.B = a3d::TEXTURE_SWIZZLE_B;
-        viewDesc.ComponentMapping.A = a3d::TEXTURE_SWIZZLE_A;
 
         for(auto i=0; i<2; ++i)
         {
-            if (!g_pDevice->CreateTextureView(g_pColorBuffer[i], &viewDesc, &g_pColorView[i]))
+            if (!g_pDevice->CreateRenderTargetView(g_pColorBuffer[i], &viewDesc, &g_pRenderTargetView[i]))
             { return false; }
         }
-    }
-
-    // ÉtÉåÅ[ÉÄÉoÉbÉtÉ@ÇÃê∂ê¨
-    {
-        // ÉtÉåÅ[ÉÄÉoÉbÉtÉ@ÇÃê›íË.
-        a3d::FrameBufferDesc desc = {};
-        desc.ColorCount         = 1;
-        desc.pColorTargets[0]   = g_pColorView[0];
-        desc.pDepthTarget       = nullptr;
-
-        // 1ñáñ⁄ÇÃÉtÉåÅ[ÉÄÉoÉbÉtÉ@Çê∂ê¨.
-        if (!g_pDevice->CreateFrameBuffer(&desc, &g_pFrameBuffer[0]))
-        { return false; }
-
-        // 2ñáñ⁄ÇÃÉtÉåÅ[ÉÄÉoÉbÉtÉ@Çê∂ê¨.
-        desc.pColorTargets[0] = g_pColorView[1];
-        if (!g_pDevice->CreateFrameBuffer(&desc, &g_pFrameBuffer[1]))
-        { return false; }
     }
 
     // ÉRÉ}ÉìÉhÉäÉXÉgÇê∂ê¨.
@@ -397,11 +373,8 @@ void TermA3D()
     // É_ÉuÉãÉoÉbÉtÉ@ÉäÉ\Å[ÉXÇÃîjä¸.
     for(auto i=0; i<2; ++i)
     {
-        // ÉtÉåÅ[ÉÄÉoÉbÉtÉ@ÇÃîjä¸.
-        a3d::SafeRelease(g_pFrameBuffer[i]);
-
-        // ÉJÉâÅ[ÉrÉÖÅ[ÇÃîjä¸.
-        a3d::SafeRelease(g_pColorView[i]);
+        // ÉåÉìÉ_Å[É^Å[ÉQÉbÉgÉrÉÖÅ[ÇÃîjä¸.
+        a3d::SafeRelease(g_pRenderTargetView[i]);
 
         // ÉJÉâÅ[ÉoÉbÉtÉ@ÇÃîjä¸.
         a3d::SafeRelease(g_pColorBuffer[i]);
@@ -456,16 +429,20 @@ void DrawA3D()
         a3d::RESOURCE_STATE_PRESENT,
         a3d::RESOURCE_STATE_COLOR_WRITE);
 
-    // ÉtÉåÅ[ÉÄÉoÉbÉtÉ@Çê›íËÇµÇ‹Ç∑.
-    pCmd->BeginFrameBuffer(g_pFrameBuffer[idx]);
-
     // ÉtÉåÅ[ÉÄÉoÉbÉtÉ@ÇÉNÉäÉAÇµÇ‹Ç∑.
     a3d::ClearColorValue clearColor = {};
-    clearColor.Float[0] = 0.25f;
-    clearColor.Float[1] = 0.25f;
-    clearColor.Float[2] = 0.25f;
-    clearColor.Float[3] = 1.0f;
-    pCmd->ClearFrameBuffer(1, &clearColor, nullptr);
+    clearColor.R = 0.25f;
+    clearColor.G = 0.25f;
+    clearColor.B = 0.25f;
+    clearColor.A = 1.0f;
+    pCmd->ClearRenderTargetView(g_pRenderTargetView[idx], clearColor);
+
+    a3d::IRenderTargetView* pRTVs[] = {
+        g_pRenderTargetView[idx]
+    };
+
+    // ÉtÉåÅ[ÉÄÉoÉbÉtÉ@Çê›íËÇµÇ‹Ç∑.
+    pCmd->BeginFrameBuffer(1, pRTVs, nullptr);
 
     {
         // ÉpÉCÉvÉâÉCÉìÉXÉeÅ[ÉgÇê›íËÇµÇ‹Ç∑.
@@ -535,11 +512,8 @@ void Resize( uint32_t w, uint32_t h, void* pUser )
 
     for(auto i=0; i<2; ++i)
     {
-        // ÉtÉåÅ[ÉÄÉoÉbÉtÉ@ÇÃîjä¸.
-        a3d::SafeRelease(g_pFrameBuffer[i]);
-
         // ÉJÉâÅ[ÉrÉÖÅ[ÇÃîjä¸.
-        a3d::SafeRelease(g_pColorView[i]);
+        a3d::SafeRelease(g_pRenderTargetView[i]);
 
         // ÉJÉâÅ[ÉoÉbÉtÉ@ÇÃîjä¸.
         a3d::SafeRelease(g_pColorBuffer[i]);
@@ -556,42 +530,19 @@ void Resize( uint32_t w, uint32_t h, void* pUser )
         g_pSwapChain->GetBuffer(0, &g_pColorBuffer[0]);
         g_pSwapChain->GetBuffer(1, &g_pColorBuffer[1]);
 
-        a3d::TextureViewDesc viewDesc = {};
+        a3d::TargetViewDesc viewDesc = {};
         viewDesc.Dimension          = a3d::VIEW_DIMENSION_TEXTURE2D;
         viewDesc.Format             = desc.Format;
-        viewDesc.TextureAspect      = a3d::TEXTURE_ASPECT_COLOR;
         viewDesc.MipSlice           = 0;
         viewDesc.MipLevels          = desc.MipLevels;
         viewDesc.FirstArraySlice    = 0;
         viewDesc.ArraySize          = 1;
-        viewDesc.ComponentMapping.R = a3d::TEXTURE_SWIZZLE_R;
-        viewDesc.ComponentMapping.G = a3d::TEXTURE_SWIZZLE_G;
-        viewDesc.ComponentMapping.B = a3d::TEXTURE_SWIZZLE_B;
-        viewDesc.ComponentMapping.A = a3d::TEXTURE_SWIZZLE_A;
 
         for(auto i=0; i<2; ++i)
         {
-            auto ret = g_pDevice->CreateTextureView(g_pColorBuffer[i], &viewDesc, &g_pColorView[i]);
+            auto ret = g_pDevice->CreateRenderTargetView(g_pColorBuffer[i], &viewDesc, &g_pRenderTargetView[i]);
             assert(ret == true);
         }
-    }
-
-    // ÉtÉåÅ[ÉÄÉoÉbÉtÉ@ÇÃê∂ê¨
-    {
-        // ÉtÉåÅ[ÉÄÉoÉbÉtÉ@ÇÃê›íË.
-        a3d::FrameBufferDesc desc = {};
-        desc.ColorCount         = 1;
-        desc.pColorTargets[0]   = g_pColorView[0];
-        desc.pDepthTarget       = nullptr;
-
-        // 1ñáñ⁄ÇÃÉtÉåÅ[ÉÄÉoÉbÉtÉ@Çê∂ê¨.
-        auto ret = g_pDevice->CreateFrameBuffer(&desc, &g_pFrameBuffer[0]);
-        assert(ret == true);
-
-        // 2ñáñ⁄ÇÃÉtÉåÅ[ÉÄÉoÉbÉtÉ@Çê∂ê¨.
-        desc.pColorTargets[0] = g_pColorView[1];
-        ret = g_pDevice->CreateFrameBuffer(&desc, &g_pFrameBuffer[1]);
-        assert(ret == true);
     }
 
     // ÉrÉÖÅ[É|Å[ÉgÇÃê›íË.

@@ -64,7 +64,7 @@ GuiMgr& GuiMgr::GetInstance()
 //-------------------------------------------------------------------------------------------------
 //      初期化処理を行います.
 //-------------------------------------------------------------------------------------------------
-bool GuiMgr::Init(a3d::IDevice* pDevice, a3d::IFrameBuffer* pFrameBuffer, IApp* pApp)
+bool GuiMgr::Init(a3d::IDevice* pDevice, const TargetViewInfo& info, IApp* pApp)
 {
     if (pDevice == nullptr || pApp == nullptr)
     { return false; }
@@ -114,7 +114,7 @@ bool GuiMgr::Init(a3d::IDevice* pDevice, a3d::IFrameBuffer* pFrameBuffer, IApp* 
         desc.Size       = a3d::RoundUp<uint64_t>( sizeof(Mat4), info.ConstantBufferMemoryAlignment );
         desc.Stride     = a3d::RoundUp<uint32_t>( sizeof(Mat4), info.ConstantBufferMemoryAlignment );
         desc.InitState  = a3d::RESOURCE_STATE_GENERAL;
-        desc.Usage      = a3d::RESOURCE_USAGE_CONSTANT_BUFFER;
+        desc.Usage      = a3d::RESOURCE_USAGE_CONSTANT_BUFFER_VIEW;
         desc.HeapType   = a3d::HEAP_TYPE_UPLOAD;
 
         for(auto i=0; i<2; ++i)
@@ -122,11 +122,11 @@ bool GuiMgr::Init(a3d::IDevice* pDevice, a3d::IFrameBuffer* pFrameBuffer, IApp* 
             if ( !m_pDevice->CreateBuffer(&desc, &m_pCB[i]) )
             { return false; }
 
-            a3d::BufferViewDesc viewDesc = {};
+            a3d::ConstantBufferViewDesc viewDesc = {};
             viewDesc.Offset = 0;
             viewDesc.Range  = desc.Stride;
 
-            if ( !m_pDevice->CreateBufferView(m_pCB[i], &viewDesc, &m_pCBV[i]) )
+            if ( !m_pDevice->CreateConstantBufferView(m_pCB[i], &viewDesc, &m_pCBV[i]) )
             { return false; }
 
             m_pProjection[i] = static_cast<Mat4*>(m_pCB[i]->Map());
@@ -167,7 +167,7 @@ bool GuiMgr::Init(a3d::IDevice* pDevice, a3d::IFrameBuffer* pFrameBuffer, IApp* 
         desc.SampleCount        = 1;
         desc.Layout             = a3d::RESOURCE_LAYOUT_OPTIMAL;
         desc.InitState          = a3d::RESOURCE_STATE_GENERAL;
-        desc.Usage              = a3d::RESOURCE_USAGE_SHADER_RESOURCE | a3d::RESOURCE_USAGE_COPY_DST;
+        desc.Usage              = a3d::RESOURCE_USAGE_SHADER_RESOURCE_VIEW | a3d::RESOURCE_USAGE_COPY_DST;
         desc.HeapType           = a3d::HEAP_TYPE_DEFAULT;
 
         if (!m_pDevice->CreateTexture(&desc, &m_pTexture))
@@ -176,20 +176,15 @@ bool GuiMgr::Init(a3d::IDevice* pDevice, a3d::IFrameBuffer* pFrameBuffer, IApp* 
             return false;
         }
 
-        a3d::TextureViewDesc viewDesc = {};
+        a3d::ShaderResourceViewDesc viewDesc = {};
         viewDesc.Dimension          = a3d::VIEW_DIMENSION_TEXTURE2D;
         viewDesc.Format             = desc.Format;
-        viewDesc.TextureAspect      = a3d::TEXTURE_ASPECT_COLOR;
         viewDesc.MipSlice           = 0;
         viewDesc.MipLevels          = desc.MipLevels;
-        viewDesc.FirstArraySlice    = 0;
-        viewDesc.ArraySize          = desc.DepthOrArraySize;
-        viewDesc.ComponentMapping.R = a3d::TEXTURE_SWIZZLE_R;
-        viewDesc.ComponentMapping.G = a3d::TEXTURE_SWIZZLE_G;
-        viewDesc.ComponentMapping.B = a3d::TEXTURE_SWIZZLE_B;
-        viewDesc.ComponentMapping.A = a3d::TEXTURE_SWIZZLE_A;
+        viewDesc.FirstElement       = 0;
+        viewDesc.ElementCount       = desc.DepthOrArraySize;
 
-        if (!m_pDevice->CreateTextureView(m_pTexture, &viewDesc, &m_pTextureView))
+        if (!m_pDevice->CreateShaderResourceView(m_pTexture, &viewDesc, &m_pTextureView))
         {
             a3d::SafeRelease(pImmediate);
             return false;
@@ -455,14 +450,10 @@ bool GuiMgr::Init(a3d::IDevice* pDevice, a3d::IFrameBuffer* pFrameBuffer, IApp* 
         desc.PrimitiveTopology = a3d::PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
         // フォーマットの設定.
-        desc.ColorCount = pFrameBuffer->GetDesc().ColorCount;
-        desc.ColorTarget[0].Format      = pFrameBuffer->GetDesc().pColorTargets[0]->GetResource()->GetDesc().Format;
-        desc.ColorTarget[0].SampleCount = pFrameBuffer->GetDesc().pColorTargets[0]->GetResource()->GetDesc().SampleCount;
-        if (pFrameBuffer->GetDesc().pDepthTarget != nullptr)
-        {
-            desc.DepthTarget.Format      = pFrameBuffer->GetDesc().pDepthTarget->GetResource()->GetDesc().Format;
-            desc.DepthTarget.SampleCount = pFrameBuffer->GetDesc().pDepthTarget->GetResource()->GetDesc().SampleCount;
-        }
+        desc.ColorCount = info.ColorCount;
+        for(auto i=0u; i<info.ColorCount; ++i)
+        { desc.ColorTarget[i] = info.ColorTargets[i]; }
+        desc.DepthTarget = info.DepthTarget;
  
         // キャッシュ済みパイプラインステートの設定.
         desc.pCachedPSO = nullptr;

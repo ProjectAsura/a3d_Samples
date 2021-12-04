@@ -25,17 +25,16 @@ void Resize(uint32_t w, uint32_t h, void* ptr);
 //-------------------------------------------------------------------------------------------------
 // Global Varaibles.
 //-------------------------------------------------------------------------------------------------
-IApp*               g_pApp              = nullptr;  //!< ウィンドウの生成を行うヘルパークラスです.
-a3d::IDevice*       g_pDevice           = nullptr;  //!< デバイスです.
-a3d::ISwapChain*    g_pSwapChain        = nullptr;  //!< スワップチェインです.
-a3d::IQueue*        g_pGraphicsQueue    = nullptr;  //!< コマンドキューです.
-a3d::IFence*        g_pFence            = nullptr;  //!< フェンスです.
-a3d::ITexture*      g_pColorBuffer[2]   = {};       //!< カラーバッファです.
-a3d::ITextureView*  g_pColorView[2]     = {};       //!< カラービューです.
-a3d::ICommandList*  g_pCommandList[2]   = {};       //!< コマンドリストです.
-a3d::IFrameBuffer*  g_pFrameBuffer[2]   = {};       //!< フレームバッファです.
-bool                g_Prepare           = false;    //!< 準備出来たらtrue.
-SampleAllocator     g_Allocator;                    //!< アロケータ.
+IApp*                       g_pApp                  = nullptr;  //!< ウィンドウの生成を行うヘルパークラスです.
+a3d::IDevice*               g_pDevice               = nullptr;  //!< デバイスです.
+a3d::ISwapChain*            g_pSwapChain            = nullptr;  //!< スワップチェインです.
+a3d::IQueue*                g_pGraphicsQueue        = nullptr;  //!< コマンドキューです.
+a3d::IFence*                g_pFence                = nullptr;  //!< フェンスです.
+a3d::ITexture*              g_pColorBuffer[2]       = {};       //!< カラーバッファです.
+a3d::IRenderTargetView*     g_pRenderTargetView[2]  = {};       //!< カラービューです.
+a3d::ICommandList*          g_pCommandList[2]       = {};       //!< コマンドリストです.
+bool                        g_Prepare               = false;    //!< 準備出来たらtrue.
+SampleAllocator             g_Allocator;                    //!< アロケータ.
 
 
 //-------------------------------------------------------------------------------------------------
@@ -135,42 +134,19 @@ bool InitA3D()
         g_pSwapChain->GetBuffer(0, &g_pColorBuffer[0]);
         g_pSwapChain->GetBuffer(1, &g_pColorBuffer[1]);
 
-        a3d::TextureViewDesc viewDesc = {};
+        a3d::TargetViewDesc viewDesc = {};
         viewDesc.Dimension          = a3d::VIEW_DIMENSION_TEXTURE2D;
         viewDesc.Format             = format;
-        viewDesc.TextureAspect      = a3d::TEXTURE_ASPECT_COLOR;
         viewDesc.MipSlice           = 0;
         viewDesc.MipLevels          = desc.MipLevels;
         viewDesc.FirstArraySlice    = 0;
         viewDesc.ArraySize          = 1;
-        viewDesc.ComponentMapping.R = a3d::TEXTURE_SWIZZLE_R;
-        viewDesc.ComponentMapping.G = a3d::TEXTURE_SWIZZLE_G;
-        viewDesc.ComponentMapping.B = a3d::TEXTURE_SWIZZLE_B;
-        viewDesc.ComponentMapping.A = a3d::TEXTURE_SWIZZLE_A;
 
         for(auto i=0; i<2; ++i)
         {
-            if (!g_pDevice->CreateTextureView(g_pColorBuffer[i], &viewDesc, &g_pColorView[i]))
+            if (!g_pDevice->CreateRenderTargetView(g_pColorBuffer[i], &viewDesc, &g_pRenderTargetView[i]))
             { return false; }
         }
-    }
-
-    // フレームバッファの生成
-    {
-        // フレームバッファの設定.
-        a3d::FrameBufferDesc desc = {};
-        desc.ColorCount         = 1;
-        desc.pColorTargets[0]   = g_pColorView[0];
-        desc.pDepthTarget       = nullptr;
-
-        // 1枚目のフレームバッファを生成.
-        if (!g_pDevice->CreateFrameBuffer(&desc, &g_pFrameBuffer[0]))
-        { return false; }
-
-        // 2枚目のフレームバッファを生成.
-        desc.pColorTargets[0] = g_pColorView[1];
-        if (!g_pDevice->CreateFrameBuffer(&desc, &g_pFrameBuffer[1]))
-        { return false; }
     }
 
     // コマンドリストを生成.
@@ -206,11 +182,8 @@ void TermA3D()
     // ダブルバッファリソースの破棄.
     for(auto i=0; i<2; ++i)
     {
-        // フレームバッファの破棄.
-        a3d::SafeRelease(g_pFrameBuffer[i]);
-
         // カラービューの破棄.
-        a3d::SafeRelease(g_pColorView[i]);
+        a3d::SafeRelease(g_pRenderTargetView[i]);
 
         // カラーバッファの破棄.
         a3d::SafeRelease(g_pColorBuffer[i]);
@@ -256,21 +229,23 @@ void DrawA3D()
         a3d::RESOURCE_STATE_PRESENT,
         a3d::RESOURCE_STATE_COLOR_WRITE);
 
-    // フレームバッファを設定します.
-    pCmd->BeginFrameBuffer(g_pFrameBuffer[idx]);
-
     // フレームバッファをクリアします.
     a3d::ClearColorValue clearColor = {};
-    clearColor.Float[0] = 0.25f;
-    clearColor.Float[1] = 0.25f;
-    clearColor.Float[2] = 0.25f;
-    clearColor.Float[3] = 1.0f;
-    pCmd->ClearFrameBuffer(1, &clearColor, nullptr);
+    clearColor.R = 0.25f;
+    clearColor.G = 0.25f;
+    clearColor.B = 0.25f;
+    clearColor.A = 1.0f;
+    pCmd->ClearRenderTargetView(g_pRenderTargetView[idx], clearColor);
 
+    a3d::IRenderTargetView* pRTVs[] = {
+        g_pRenderTargetView[idx]
+    };
+
+    // フレームバッファを設定します.
+    pCmd->BeginFrameBuffer(1, pRTVs, nullptr);
     {
         /* TODO */
     }
-
     pCmd->EndFrameBuffer();
 
     // 表示用にバリアを設定します.
@@ -322,11 +297,8 @@ void Resize( uint32_t w, uint32_t h, void* pUser )
 
     for(auto i=0; i<2; ++i)
     {
-        // フレームバッファの破棄.
-        a3d::SafeRelease(g_pFrameBuffer[i]);
-
-        // カラービューの破棄.
-        a3d::SafeRelease(g_pColorView[i]);
+        // レンダーターゲットビューの破棄.
+        a3d::SafeRelease(g_pRenderTargetView[i]);
 
         // カラーバッファの破棄.
         a3d::SafeRelease(g_pColorBuffer[i]);
@@ -343,42 +315,19 @@ void Resize( uint32_t w, uint32_t h, void* pUser )
         g_pSwapChain->GetBuffer(0, &g_pColorBuffer[0]);
         g_pSwapChain->GetBuffer(1, &g_pColorBuffer[1]);
 
-        a3d::TextureViewDesc viewDesc = {};
+        a3d::TargetViewDesc viewDesc = {};
         viewDesc.Dimension          = a3d::VIEW_DIMENSION_TEXTURE2D;
         viewDesc.Format             = desc.Format;
-        viewDesc.TextureAspect      = a3d::TEXTURE_ASPECT_COLOR;
         viewDesc.MipSlice           = 0;
         viewDesc.MipLevels          = desc.MipLevels;
         viewDesc.FirstArraySlice    = 0;
         viewDesc.ArraySize          = 1;
-        viewDesc.ComponentMapping.R = a3d::TEXTURE_SWIZZLE_R;
-        viewDesc.ComponentMapping.G = a3d::TEXTURE_SWIZZLE_G;
-        viewDesc.ComponentMapping.B = a3d::TEXTURE_SWIZZLE_B;
-        viewDesc.ComponentMapping.A = a3d::TEXTURE_SWIZZLE_A;
 
         for(auto i=0; i<2; ++i)
         {
-            auto ret = g_pDevice->CreateTextureView(g_pColorBuffer[i], &viewDesc, &g_pColorView[i]);
+            auto ret = g_pDevice->CreateRenderTargetView(g_pColorBuffer[i], &viewDesc, &g_pRenderTargetView[i]);
             assert(ret == true);
         }
-    }
-
-    // フレームバッファの生成
-    {
-        // フレームバッファの設定.
-        a3d::FrameBufferDesc desc = {};
-        desc.ColorCount         = 1;
-        desc.pColorTargets[0]   = g_pColorView[0];
-        desc.pDepthTarget       = nullptr;
-
-        // 1枚目のフレームバッファを生成.
-        auto ret = g_pDevice->CreateFrameBuffer(&desc, &g_pFrameBuffer[0]);
-        assert(ret == true);
-
-        // 2枚目のフレームバッファを生成.
-        desc.pColorTargets[0] = g_pColorView[1];
-        ret = g_pDevice->CreateFrameBuffer(&desc, &g_pFrameBuffer[1]);
-        assert(ret == true);
     }
 
     g_Prepare = true;
