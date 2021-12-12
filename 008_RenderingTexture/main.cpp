@@ -222,7 +222,7 @@ bool InitA3D()
         desc.MipLevels          = 1;
         desc.SampleCount        = 1;
         desc.Layout             = a3d::RESOURCE_LAYOUT_OPTIMAL;
-        desc.Usage              = a3d::RESOURCE_USAGE_DEPTH_STENCIL_VIEW;
+        desc.Usage              = a3d::RESOURCE_USAGE_DEPTH_STENCIL;
         desc.InitState          = a3d::RESOURCE_STATE_DEPTH_WRITE;
         desc.HeapType           = a3d::HEAP_TYPE_DEFAULT;
 
@@ -322,7 +322,7 @@ bool InitA3D()
         desc.Size       = stride;
         desc.Stride     = stride;
         desc.InitState  = a3d::RESOURCE_STATE_GENERAL;
-        desc.Usage      = a3d::RESOURCE_USAGE_CONSTANT_BUFFER_VIEW;
+        desc.Usage      = a3d::RESOURCE_USAGE_CONSTANT_BUFFER;
         desc.HeapType   = a3d::HEAP_TYPE_UPLOAD;
 
         a3d::ConstantBufferViewDesc viewDesc = {};
@@ -375,17 +375,17 @@ bool InitA3D()
         desc.MaxSetCount               = 2;
         desc.EntryCount                = 3;
 
-        desc.Entries[0].ShaderMask     = a3d::SHADER_MASK_VERTEX;
+        desc.Entries[0].ShaderMask     = a3d::SHADER_MASK_VS;
         desc.Entries[0].ShaderRegister = 0;
         desc.Entries[0].BindLocation   = 0;
         desc.Entries[0].Type           = a3d::DESCRIPTOR_TYPE_CBV;
 
-        desc.Entries[1].ShaderMask     = a3d::SHADER_MASK_PIXEL;
+        desc.Entries[1].ShaderMask     = a3d::SHADER_MASK_PS;
         desc.Entries[1].ShaderRegister = 0;
         desc.Entries[1].BindLocation   = 1;
         desc.Entries[1].Type           = a3d::DESCRIPTOR_TYPE_SMP;
 
-        desc.Entries[2].ShaderMask     = a3d::SHADER_MASK_PIXEL;
+        desc.Entries[2].ShaderMask     = a3d::SHADER_MASK_PS;
         desc.Entries[2].ShaderRegister = 0;
         desc.Entries[2].BindLocation   = 2;
         desc.Entries[2].Type           = a3d::DESCRIPTOR_TYPE_SRV;
@@ -394,12 +394,12 @@ bool InitA3D()
         desc.MaxSetCount               = 2;
         desc.EntryCount                = 2;
 
-        desc.Entries[0].ShaderMask     = a3d::SHADER_MASK_VERTEX;
+        desc.Entries[0].ShaderMask     = a3d::SHADER_MASK_VS;
         desc.Entries[0].ShaderRegister = 0;
         desc.Entries[0].BindLocation   = 0;
         desc.Entries[0].Type           = a3d::DESCRIPTOR_TYPE_CBV;
 
-        desc.Entries[1].ShaderMask     = a3d::SHADER_MASK_PIXEL;
+        desc.Entries[1].ShaderMask     = a3d::SHADER_MASK_PS;
         desc.Entries[1].ShaderRegister = 0;
         desc.Entries[1].BindLocation   = 0;
         desc.Entries[1].Type           = a3d::DESCRIPTOR_TYPE_SRV;
@@ -447,19 +447,7 @@ bool InitA3D()
         desc.BlendState.LogicOpEnable                   = false;
         desc.BlendState.LogicOp                         = a3d::LOGIC_OP_NOOP;
         for(auto i=0; i<8; ++i)
-        {
-            desc.BlendState.ColorTarget[i].BlendEnable      = false;
-            desc.BlendState.ColorTarget[i].SrcBlend         = a3d::BLEND_FACTOR_ONE;
-            desc.BlendState.ColorTarget[i].DstBlend         = a3d::BLEND_FACTOR_ZERO;
-            desc.BlendState.ColorTarget[i].BlendOp          = a3d::BLEND_OP_ADD;
-            desc.BlendState.ColorTarget[i].SrcBlendAlpha    = a3d::BLEND_FACTOR_ONE;
-            desc.BlendState.ColorTarget[i].DstBlendAlpha    = a3d::BLEND_FACTOR_ZERO;
-            desc.BlendState.ColorTarget[i].BlendOpAlpha     = a3d::BLEND_OP_ADD;
-            desc.BlendState.ColorTarget[i].EnableWriteR     = true;
-            desc.BlendState.ColorTarget[i].EnableWriteG     = true;
-            desc.BlendState.ColorTarget[i].EnableWriteB     = true;
-            desc.BlendState.ColorTarget[i].EnableWriteA     = true;
-        }
+        { desc.BlendState.RenderTarget[i] = a3d::ColorBlendState::Opaque(); }
 
         // ラスタライザ―ステートの設定.
         desc.RasterizerState.PolygonMode                = a3d::POLYGON_MODE_SOLID;
@@ -501,11 +489,11 @@ bool InitA3D()
         desc.PrimitiveTopology = a3d::PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
         // フォーマットの設定.
-        desc.ColorCount                 = 1;
-        desc.ColorTarget[0].Format      = format;
-        desc.ColorTarget[0].SampleCount = 1;
-        desc.DepthTarget.Format         = a3d::RESOURCE_FORMAT_D32_FLOAT;
-        desc.DepthTarget.SampleCount    = 1;
+        desc.RenderTargetCount              = 1;
+        desc.RenderTarget[0].Format         = format;
+        desc.RenderTarget[0].SampleCount    = 1;
+        desc.DepthTarget.Format             = a3d::RESOURCE_FORMAT_D32_FLOAT;
+        desc.DepthTarget.SampleCount        = 1;
 
         // キャッシュ済みパイプラインステートの設定.
         desc.pCachedPSO = nullptr;
@@ -582,7 +570,7 @@ bool InitA3D()
         desc.MipLevels          = 1;
         desc.SampleCount        = 1;
         desc.Layout             = a3d::RESOURCE_LAYOUT_OPTIMAL;
-        desc.Usage              = a3d::RESOURCE_USAGE_RENDER_TARGET_VIEW | a3d::RESOURCE_USAGE_SHADER_RESOURCE_VIEW;
+        desc.Usage              = a3d::RESOURCE_USAGE_RENDER_TARGET | a3d::RESOURCE_USAGE_SHADER_RESOURCE;
         desc.InitState          = a3d::RESOURCE_STATE_GENERAL;
         desc.HeapType           = a3d::HEAP_TYPE_DEFAULT;
 
@@ -687,19 +675,7 @@ bool InitA3D()
         desc.BlendState.LogicOpEnable                   = false;
         desc.BlendState.LogicOp                         = a3d::LOGIC_OP_NOOP;
         for(auto i=0; i<8; ++i)
-        {
-            desc.BlendState.ColorTarget[i].BlendEnable      = false;
-            desc.BlendState.ColorTarget[i].SrcBlend         = a3d::BLEND_FACTOR_ONE;
-            desc.BlendState.ColorTarget[i].DstBlend         = a3d::BLEND_FACTOR_ZERO;
-            desc.BlendState.ColorTarget[i].BlendOp          = a3d::BLEND_OP_ADD;
-            desc.BlendState.ColorTarget[i].SrcBlendAlpha    = a3d::BLEND_FACTOR_ONE;
-            desc.BlendState.ColorTarget[i].DstBlendAlpha    = a3d::BLEND_FACTOR_ZERO;
-            desc.BlendState.ColorTarget[i].BlendOpAlpha     = a3d::BLEND_OP_ADD;
-            desc.BlendState.ColorTarget[i].EnableWriteR     = true;
-            desc.BlendState.ColorTarget[i].EnableWriteG     = true;
-            desc.BlendState.ColorTarget[i].EnableWriteB     = true;
-            desc.BlendState.ColorTarget[i].EnableWriteA     = true;
-        }
+        { desc.BlendState.RenderTarget[i] = a3d::ColorBlendState::Opaque(); }
 
         // ラスタライザ―ステートの設定.
         desc.RasterizerState.PolygonMode                = a3d::POLYGON_MODE_SOLID;
@@ -741,9 +717,9 @@ bool InitA3D()
         desc.PrimitiveTopology = a3d::PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
         // フォーマットの設定.
-        desc.ColorCount                 = 1;
-        desc.ColorTarget[0].Format      = a3d::RESOURCE_FORMAT_R8G8B8A8_UNORM;
-        desc.ColorTarget[0].SampleCount = 1;
+        desc.RenderTargetCount              = 1;
+        desc.RenderTarget[0].Format         = a3d::RESOURCE_FORMAT_R8G8B8A8_UNORM;
+        desc.RenderTarget[0].SampleCount    = 1;
 
         // キャッシュ済みパイプラインステートの設定.
         desc.pCachedPSO = nullptr;
@@ -1144,7 +1120,7 @@ void Resize( uint32_t w, uint32_t h, void* pUser )
         desc.MipLevels          = 1;
         desc.SampleCount        = 1;
         desc.Layout             = a3d::RESOURCE_LAYOUT_OPTIMAL;
-        desc.Usage              = a3d::RESOURCE_USAGE_DEPTH_STENCIL_VIEW;
+        desc.Usage              = a3d::RESOURCE_USAGE_DEPTH_STENCIL;
         desc.InitState          = a3d::RESOURCE_STATE_DEPTH_WRITE;
         desc.HeapType           = a3d::HEAP_TYPE_DEFAULT;
 
@@ -1175,7 +1151,7 @@ void Resize( uint32_t w, uint32_t h, void* pUser )
         desc.MipLevels          = 1;
         desc.SampleCount        = 1;
         desc.Layout             = a3d::RESOURCE_LAYOUT_OPTIMAL;
-        desc.Usage              = a3d::RESOURCE_USAGE_RENDER_TARGET_VIEW | a3d::RESOURCE_USAGE_SHADER_RESOURCE_VIEW;
+        desc.Usage              = a3d::RESOURCE_USAGE_RENDER_TARGET | a3d::RESOURCE_USAGE_SHADER_RESOURCE;
         desc.InitState          = a3d::RESOURCE_STATE_GENERAL;
         desc.HeapType           = a3d::HEAP_TYPE_DEFAULT;
 

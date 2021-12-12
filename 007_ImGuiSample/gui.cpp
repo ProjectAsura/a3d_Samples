@@ -114,7 +114,7 @@ bool GuiMgr::Init(a3d::IDevice* pDevice, const TargetViewInfo& info, IApp* pApp)
         desc.Size       = a3d::RoundUp<uint64_t>( sizeof(Mat4), info.ConstantBufferMemoryAlignment );
         desc.Stride     = a3d::RoundUp<uint32_t>( sizeof(Mat4), info.ConstantBufferMemoryAlignment );
         desc.InitState  = a3d::RESOURCE_STATE_GENERAL;
-        desc.Usage      = a3d::RESOURCE_USAGE_CONSTANT_BUFFER_VIEW;
+        desc.Usage      = a3d::RESOURCE_USAGE_CONSTANT_BUFFER;
         desc.HeapType   = a3d::HEAP_TYPE_UPLOAD;
 
         for(auto i=0; i<2; ++i)
@@ -167,7 +167,7 @@ bool GuiMgr::Init(a3d::IDevice* pDevice, const TargetViewInfo& info, IApp* pApp)
         desc.SampleCount        = 1;
         desc.Layout             = a3d::RESOURCE_LAYOUT_OPTIMAL;
         desc.InitState          = a3d::RESOURCE_STATE_GENERAL;
-        desc.Usage              = a3d::RESOURCE_USAGE_SHADER_RESOURCE_VIEW | a3d::RESOURCE_USAGE_COPY_DST;
+        desc.Usage              = a3d::RESOURCE_USAGE_SHADER_RESOURCE | a3d::RESOURCE_USAGE_COPY_DST;
         desc.HeapType           = a3d::HEAP_TYPE_DEFAULT;
 
         if (!m_pDevice->CreateTexture(&desc, &m_pTexture))
@@ -273,17 +273,17 @@ bool GuiMgr::Init(a3d::IDevice* pDevice, const TargetViewInfo& info, IApp* pApp)
         desc.MaxSetCount               = 2;
         desc.EntryCount                = 3;
         
-        desc.Entries[0].ShaderMask     = a3d::SHADER_MASK_VERTEX;
+        desc.Entries[0].ShaderMask     = a3d::SHADER_MASK_VS;
         desc.Entries[0].ShaderRegister = 0;
         desc.Entries[0].BindLocation   = 0;
         desc.Entries[0].Type           = a3d::DESCRIPTOR_TYPE_CBV;
 
-        desc.Entries[1].ShaderMask     = a3d::SHADER_MASK_PIXEL;
+        desc.Entries[1].ShaderMask     = a3d::SHADER_MASK_PS;
         desc.Entries[1].ShaderRegister = 0;
         desc.Entries[1].BindLocation   = 1;
         desc.Entries[1].Type           = a3d::DESCRIPTOR_TYPE_SMP;
 
-        desc.Entries[2].ShaderMask     = a3d::SHADER_MASK_PIXEL;
+        desc.Entries[2].ShaderMask     = a3d::SHADER_MASK_PS;
         desc.Entries[2].ShaderRegister = 0;
         desc.Entries[2].BindLocation   = 2;
         desc.Entries[2].Type           = a3d::DESCRIPTOR_TYPE_SRV;
@@ -384,31 +384,9 @@ bool GuiMgr::Init(a3d::IDevice* pDevice, const TargetViewInfo& info, IApp* pApp)
         desc.BlendState.IndependentBlendEnable          = false;
         desc.BlendState.LogicOpEnable                   = false;
         desc.BlendState.LogicOp                         = a3d::LOGIC_OP_NOOP;
-        desc.BlendState.ColorTarget[0].BlendEnable      = true;
-        desc.BlendState.ColorTarget[0].SrcBlend         = a3d::BLEND_FACTOR_SRC_ALPHA;
-        desc.BlendState.ColorTarget[0].DstBlend         = a3d::BLEND_FACTOR_INV_SRC_ALPHA;
-        desc.BlendState.ColorTarget[0].BlendOp          = a3d::BLEND_OP_ADD;
-        desc.BlendState.ColorTarget[0].SrcBlendAlpha    = a3d::BLEND_FACTOR_INV_SRC_ALPHA;
-        desc.BlendState.ColorTarget[0].DstBlendAlpha    = a3d::BLEND_FACTOR_ZERO;
-        desc.BlendState.ColorTarget[0].BlendOpAlpha     = a3d::BLEND_OP_ADD;
-        desc.BlendState.ColorTarget[0].EnableWriteR     = true;
-        desc.BlendState.ColorTarget[0].EnableWriteG     = true;
-        desc.BlendState.ColorTarget[0].EnableWriteB     = true;
-        desc.BlendState.ColorTarget[0].EnableWriteA     = true;
+        desc.BlendState.RenderTarget[0]                 = a3d::ColorBlendState::AlphaBlend();
         for(auto i=1; i<8; ++i)
-        {
-            desc.BlendState.ColorTarget[i].BlendEnable      = false;
-            desc.BlendState.ColorTarget[i].SrcBlend         = a3d::BLEND_FACTOR_ONE;
-            desc.BlendState.ColorTarget[i].DstBlend         = a3d::BLEND_FACTOR_ZERO;
-            desc.BlendState.ColorTarget[i].BlendOp          = a3d::BLEND_OP_ADD;
-            desc.BlendState.ColorTarget[i].SrcBlendAlpha    = a3d::BLEND_FACTOR_ONE;
-            desc.BlendState.ColorTarget[i].DstBlendAlpha    = a3d::BLEND_FACTOR_ZERO;
-            desc.BlendState.ColorTarget[i].BlendOpAlpha     = a3d::BLEND_OP_ADD;
-            desc.BlendState.ColorTarget[i].EnableWriteR     = true;
-            desc.BlendState.ColorTarget[i].EnableWriteG     = true;
-            desc.BlendState.ColorTarget[i].EnableWriteB     = true;
-            desc.BlendState.ColorTarget[i].EnableWriteA     = true;
-        }
+        { desc.BlendState.RenderTarget[i] = a3d::ColorBlendState::Opaque(); }
 
         // ラスタライザ―ステートの設定.
         desc.RasterizerState.PolygonMode                = a3d::POLYGON_MODE_SOLID;
@@ -450,9 +428,9 @@ bool GuiMgr::Init(a3d::IDevice* pDevice, const TargetViewInfo& info, IApp* pApp)
         desc.PrimitiveTopology = a3d::PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
         // フォーマットの設定.
-        desc.ColorCount = info.ColorCount;
+        desc.RenderTargetCount = info.ColorCount;
         for(auto i=0u; i<info.ColorCount; ++i)
-        { desc.ColorTarget[i] = info.ColorTargets[i]; }
+        { desc.RenderTarget[i] = info.ColorTargets[i]; }
         desc.DepthTarget = info.DepthTarget;
  
         // キャッシュ済みパイプラインステートの設定.

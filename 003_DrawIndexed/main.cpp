@@ -301,19 +301,7 @@ bool InitA3D()
         desc.BlendState.LogicOpEnable                   = false;
         desc.BlendState.LogicOp                         = a3d::LOGIC_OP_NOOP;
         for(auto i=0; i<8; ++i)
-        {
-            desc.BlendState.ColorTarget[i].BlendEnable      = false;
-            desc.BlendState.ColorTarget[i].SrcBlend         = a3d::BLEND_FACTOR_ONE;
-            desc.BlendState.ColorTarget[i].DstBlend         = a3d::BLEND_FACTOR_ZERO;
-            desc.BlendState.ColorTarget[i].BlendOp          = a3d::BLEND_OP_ADD;
-            desc.BlendState.ColorTarget[i].SrcBlendAlpha    = a3d::BLEND_FACTOR_ONE;
-            desc.BlendState.ColorTarget[i].DstBlendAlpha    = a3d::BLEND_FACTOR_ZERO;
-            desc.BlendState.ColorTarget[i].BlendOpAlpha     = a3d::BLEND_OP_ADD;
-            desc.BlendState.ColorTarget[i].EnableWriteR     = true;
-            desc.BlendState.ColorTarget[i].EnableWriteG     = true;
-            desc.BlendState.ColorTarget[i].EnableWriteB     = true;
-            desc.BlendState.ColorTarget[i].EnableWriteA     = true;
-        }
+        { desc.BlendState.RenderTarget[i] = a3d::ColorBlendState::Opaque(); }
 
         // ラスタライザ―ステートの設定.
         desc.RasterizerState.PolygonMode                = a3d::POLYGON_MODE_SOLID;
@@ -355,9 +343,9 @@ bool InitA3D()
         desc.PrimitiveTopology = a3d::PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
         // フォーマットの設定.
-        desc.ColorCount = 1;
-        desc.ColorTarget[0].Format = format;
-        desc.ColorTarget[0].SampleCount = 1;
+        desc.RenderTargetCount              = 1;
+        desc.RenderTarget[0].Format         = format;
+        desc.RenderTarget[0].SampleCount    = 1;
 
         // キャッシュ済みパイプラインステートの設定.
         desc.pCachedPSO = nullptr;
