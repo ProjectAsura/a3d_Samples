@@ -410,9 +410,8 @@ bool InitA3D()
         desc.PrimitiveTopology = a3d::PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
         // フォーマットの設定.
-        desc.RenderTargetCount           = 1;
-        desc.RenderTarget[0].Format      = format;
-        desc.RenderTarget[0].SampleCount = 1;
+        desc.RenderTargetCount  = 1;
+        desc.RenderTarget[0]    = format;
 
         // キャッシュ済みパイプラインステートの設定.
         desc.pCachedPSO = nullptr;

@@ -29,9 +29,9 @@ public:
     //=============================================================================================
     struct TargetViewInfo
     {
-        uint32_t            ColorCount;
-        a3d::TargetFormat   ColorTargets[8];
-        a3d::TargetFormat   DepthTarget;
+        uint32_t                ColorCount;
+        a3d::RESOURCE_FORMAT    ColorTargets[8];
+        a3d::RESOURCE_FORMAT    DepthTarget;
     };
 
     //=============================================================================================

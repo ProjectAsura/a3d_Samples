@@ -475,11 +475,9 @@ bool InitA3D()
         desc.PrimitiveTopology = a3d::PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
         // フォーマットの設定.
-        desc.RenderTargetCount              = 1;
-        desc.RenderTarget[0].Format         = format;
-        desc.RenderTarget[0].SampleCount    = 1;
-        desc.DepthTarget.Format             = a3d::RESOURCE_FORMAT_D32_FLOAT;
-        desc.DepthTarget.SampleCount        = 1;
+        desc.RenderTargetCount  = 1;
+        desc.RenderTarget[0]    = format;
+        desc.DepthTarget        = a3d::RESOURCE_FORMAT_D32_FLOAT;
 
         // キャッシュ済みパイプラインステートの設定.
         desc.pCachedPSO = nullptr;
@@ -654,11 +652,9 @@ bool InitA3D()
     }
 
     GuiMgr::TargetViewInfo targetInfo = {};
-    targetInfo.ColorCount                   = 1;
-    targetInfo.ColorTargets[0].Format       = format;
-    targetInfo.ColorTargets[0].SampleCount  = 1;
-    targetInfo.DepthTarget.Format           = a3d::RESOURCE_FORMAT_D32_FLOAT;
-    targetInfo.DepthTarget.SampleCount      = 1;
+    targetInfo.ColorCount       = 1;
+    targetInfo.ColorTargets[0]  = format;
+    targetInfo.DepthTarget      = a3d::RESOURCE_FORMAT_D32_FLOAT;
 
     // GUIマネージャの初期化.
     if (!GuiMgr::GetInstance().Init(g_pDevice, targetInfo, g_pApp))
