@@ -25,8 +25,8 @@ Global
 		{3C0984A7-5DD1-4EE2-B268-A7F975CF7A2C}.D3D12_Release|x64.Build.0 = D3D12_Release|x64
 		{3C0984A7-5DD1-4EE2-B268-A7F975CF7A2C}.Vulkan_Debug|x64.ActiveCfg = Vulkan_Debug|x64
 		{3C0984A7-5DD1-4EE2-B268-A7F975CF7A2C}.Vulkan_Debug|x64.Build.0 = Vulkan_Debug|x64
-		{3C0984A7-5DD1-4EE2-B268-A7F975CF7A2C}.Vulkan_Release|x64.ActiveCfg = D3D11_Release|x64
-		{3C0984A7-5DD1-4EE2-B268-A7F975CF7A2C}.Vulkan_Release|x64.Build.0 = D3D11_Release|x64
+		{3C0984A7-5DD1-4EE2-B268-A7F975CF7A2C}.Vulkan_Release|x64.ActiveCfg = Vulkan_Release|x64
+		{3C0984A7-5DD1-4EE2-B268-A7F975CF7A2C}.Vulkan_Release|x64.Build.0 = Vulkan_Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

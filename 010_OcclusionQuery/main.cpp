@@ -502,6 +502,10 @@ void TermA3D()
 {
     g_Prepare = false;
 
+    // アイドル状態になるまで待つ.
+    g_pGraphicsQueue->WaitIdle();
+    g_pDevice->WaitIdle();
+
     GuiMgr::GetInstance().Term();
 
     // ダブルバッファリソースの破棄.
