@@ -290,57 +290,17 @@ bool InitA3D()
         stencilTest.StencilCompareOp   = a3d::COMPARE_OP_NEVER;
 
         // グラフィックスパイプラインステートを設定します.
-        a3d::GraphicsPipelineStateDesc desc = {};
+        a3d::GraphicsPipelineStateDesc desc = a3d::GraphicsPipelineStateDesc::Default();
 
         // シェーダの設定.
         desc.VS = vs;
         desc.PS = ps;
-
-        // ブレンドステートの設定.
-        desc.BlendState.IndependentBlendEnable          = false;
-        desc.BlendState.LogicOpEnable                   = false;
-        desc.BlendState.LogicOp                         = a3d::LOGIC_OP_NOOP;
-        for(auto i=0; i<8; ++i)
-        { desc.BlendState.RenderTarget[i] = a3d::ColorBlendState::Opaque(); }
-
-        // ラスタライザ―ステートの設定.
-        desc.RasterizerState.PolygonMode                = a3d::POLYGON_MODE_SOLID;
-        desc.RasterizerState.CullMode                   = a3d::CULL_MODE_NONE;
-        desc.RasterizerState.FrontCounterClockWise      = false;
-        desc.RasterizerState.DepthBias                  = 0;
-        desc.RasterizerState.DepthBiasClamp             = 0.0f;
-        desc.RasterizerState.SlopeScaledDepthBias       = 0;
-        desc.RasterizerState.DepthClipEnable            = false;
-        desc.RasterizerState.EnableConservativeRaster   = false;
-        
-        // マルチサンプルステートの設定.
-        desc.MultiSampleState.EnableAlphaToCoverage = false;
-        desc.MultiSampleState.EnableMultiSample     = false;
-        desc.MultiSampleState.SampleCount           = 1;
-
-        // 深度ステートの設定.
-        desc.DepthState.DepthTestEnable      = false;
-        desc.DepthState.DepthWriteEnable     = false;
-        desc.DepthState.DepthCompareOp       = a3d::COMPARE_OP_NEVER;
-
-        // ステンシルステートの設定.
-        desc.StencilState.StencilTestEnable    = false;
-        desc.StencilState.StencllReadMask      = 0;
-        desc.StencilState.StencilWriteMask     = 0;
-        desc.StencilState.FrontFace            = stencilTest;
-        desc.StencilState.BackFace             = stencilTest;
-
-        // テッセレーションステートの設定.
-        desc.TessellationState.PatchControlCount = 0;
 
         // 入力アウトの設定.
         desc.InputLayout = inputLayout;
 
         // ディスクリプタセットレイアウトの設定.
         desc.pLayout = g_pDescriptorSetLayout;
-        
-        // プリミティブトポロジーの設定.
-        desc.PrimitiveTopology = a3d::PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
         // フォーマットの設定.
         desc.RenderTargetCount  = 1;
