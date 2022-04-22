@@ -343,9 +343,9 @@ bool GuiMgr::Init(a3d::IDevice* pDevice, const TargetViewInfo& info, IApp* pApp)
     {
         // 入力要素です.
         a3d::InputElementDesc inputElements[] = {
-            { a3d::SEMANTICS_POSITION , a3d::RESOURCE_FORMAT_R32G32_FLOAT   , 0,  0, a3d::INPUT_CLASSIFICATION_PER_VERTEX },
-            { a3d::SEMANTICS_TEXCOORD0, a3d::RESOURCE_FORMAT_R32G32_FLOAT   , 0,  8, a3d::INPUT_CLASSIFICATION_PER_VERTEX },
-            { a3d::SEMANTICS_COLOR0   , a3d::RESOURCE_FORMAT_R8G8B8A8_UNORM , 0, 16, a3d::INPUT_CLASSIFICATION_PER_VERTEX }
+            { "POSITION", 0, 0, a3d::RESOURCE_FORMAT_R32G32_FLOAT   , 0,  0, a3d::INPUT_CLASSIFICATION_PER_VERTEX },
+            { "TEXCOORD", 0, 5, a3d::RESOURCE_FORMAT_R32G32_FLOAT   , 0,  8, a3d::INPUT_CLASSIFICATION_PER_VERTEX },
+            { "COLOR"   , 0, 1, a3d::RESOURCE_FORMAT_R8G8B8A8_UNORM , 0, 16, a3d::INPUT_CLASSIFICATION_PER_VERTEX }
         };
 
         // 入力レイアウトです.

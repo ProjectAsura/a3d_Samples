@@ -405,8 +405,8 @@ bool InitA3D()
     {
         // 入力要素です.
         a3d::InputElementDesc inputElements[] = {
-            { a3d::SEMANTICS_POSITION,  a3d::RESOURCE_FORMAT_R32G32B32_FLOAT , 0,  0, a3d::INPUT_CLASSIFICATION_PER_VERTEX },
-            { a3d::SEMANTICS_TEXCOORD0, a3d::RESOURCE_FORMAT_R32G32_FLOAT    , 0, 12, a3d::INPUT_CLASSIFICATION_PER_VERTEX },
+            { "POSITION", 0, 0, a3d::RESOURCE_FORMAT_R32G32B32_FLOAT , 0,  0, a3d::INPUT_CLASSIFICATION_PER_VERTEX },
+            { "TEXCOORD", 0, 5, a3d::RESOURCE_FORMAT_R32G32_FLOAT    , 0, 12, a3d::INPUT_CLASSIFICATION_PER_VERTEX },
         };
 
         // 入力レイアウトです.
@@ -738,10 +738,11 @@ void DrawA3D()
         a3d::RESOURCE_STATE_COLOR_WRITE);
 
     a3d::ClearColorValue clearColor = {};
-    clearColor.R = g_ClearColor[0];
-    clearColor.G = g_ClearColor[1];
-    clearColor.B = g_ClearColor[2];
-    clearColor.A = g_ClearColor[3];
+    clearColor.R            = g_ClearColor[0];
+    clearColor.G            = g_ClearColor[1];
+    clearColor.B            = g_ClearColor[2];
+    clearColor.A            = g_ClearColor[3];
+    clearColor.SlotIndex    = 0;
 
     a3d::ClearDepthStencilValue clearDepth = {};
     clearDepth.Depth                = 1.0f;
@@ -749,15 +750,12 @@ void DrawA3D()
     clearDepth.EnableClearDepth     = true;
     clearDepth.EnableClearStencil   = false;
 
-    pCmd->ClearRenderTargetView(g_pColorView[idx], clearColor);
-    pCmd->ClearDepthStencilView(g_pDepthView, clearDepth);
-
     a3d::IRenderTargetView* pRTVs[] = {
         g_pColorView[idx]
     };
 
     // フレームバッファを設定します.
-    pCmd->BeginFrameBuffer(1, pRTVs, g_pDepthView);
+    pCmd->BeginFrameBuffer(1, pRTVs, g_pDepthView, 1, &clearColor, &clearDepth);
 
     // 3D描画.
     {

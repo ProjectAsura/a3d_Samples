@@ -348,8 +348,8 @@ bool InitA3D()
     {
         // 入力要素です.
         a3d::InputElementDesc inputElements[] = {
-            { a3d::SEMANTICS_POSITION, a3d::RESOURCE_FORMAT_R32G32B32_FLOAT   , 0,  0, a3d::INPUT_CLASSIFICATION_PER_VERTEX },
-            { a3d::SEMANTICS_COLOR0  , a3d::RESOURCE_FORMAT_R32G32B32A32_FLOAT, 0, 12, a3d::INPUT_CLASSIFICATION_PER_VERTEX },
+            { "POSITION", 0, 0, a3d::RESOURCE_FORMAT_R32G32B32_FLOAT   , 0,  0, a3d::INPUT_CLASSIFICATION_PER_VERTEX },
+            { "COLOR"   , 0, 1, a3d::RESOURCE_FORMAT_R32G32B32A32_FLOAT, 0, 12, a3d::INPUT_CLASSIFICATION_PER_VERTEX },
         };
 
         // 入力レイアウトです.
@@ -562,15 +562,14 @@ void DrawA3D()
 
     // フレームバッファをクリアします.
     a3d::ClearColorValue clearColor = {};
-    clearColor.R = 0.25f;
-    clearColor.G = 0.25f;
-    clearColor.B = 0.25f;
-    clearColor.A = 1.0f;
-
-    pCmd->ClearRenderTargetView(g_pColorView[idx], clearColor);
+    clearColor.R            = 0.25f;
+    clearColor.G            = 0.25f;
+    clearColor.B            = 0.25f;
+    clearColor.A            = 1.0f;
+    clearColor.SlotIndex    = 0;
 
     // フレームバッファを設定します.
-    pCmd->BeginFrameBuffer(1, &g_pColorView[idx], nullptr);
+    pCmd->BeginFrameBuffer(1, &g_pColorView[idx], nullptr, 1, &clearColor, nullptr);
 
     {
         // クエリ開始.
