@@ -4,15 +4,15 @@
 // Copyright(c) Project Asura. All right reserved.
 //-------------------------------------------------------------------------------------------------
 
-#include "spirvHelper.hlsli"
+#include "a3dShader.hlsli"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // VSInput structure
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 struct VSInput 
 {
-    LOCATION(0) float3 Position : POSITION;     // 位置座標です.
-    LOCATION(5) float2 TexCoord : TEXCOORD;     // テクスチャ座標です.
+    A3D_LOCATION(0) float3 Position : POSITION;     // 位置座標です.
+    A3D_LOCATION(5) float2 TexCoord : TEXCOORD;     // テクスチャ座標です.
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -20,14 +20,14 @@ struct VSInput
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 struct VSOutput
 {
-    LOCATION(0) float4 Position : SV_POSITION;  // 位置座標です.
-    LOCATION(1) float2 TexCoord : TEXCOORD;     // テクスチャ座標です.
+    A3D_LOCATION(0) float4 Position : SV_POSITION;  // 位置座標です.
+    A3D_LOCATION(1) float2 TexCoord : TEXCOORD;     // テクスチャ座標です.
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Transform buffer
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-RESOURCE(cbuffer Transform, b0, 0)
+A3D_RESOURCE(cbuffer Transform, b0, 0)
 {
     float4x4 World;
     float4x4 View;
@@ -50,6 +50,6 @@ VSOutput main(const VSInput input)
     output.Position = projPos;
     output.TexCoord = input.TexCoord;
 
-    FLIP_Y(output.Position);
+    A3D_FLIP_Y(output.Position);
     return output;
 }

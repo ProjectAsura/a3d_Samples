@@ -4,15 +4,15 @@
 // Copyright(c) Project Asura. All right reserved.
 //-------------------------------------------------------------------------------------------------
 
-#include "spirvHelper.hlsli"
+#include "a3dShader.hlsli"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // VSOutput structure
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 struct VSOutput
 {
-    LOCATION(0) float4 Position : SV_POSITION;
-    LOCATION(1) float2 TexCoord : TEXCOORD;
+    A3D_LOCATION(0) float4 Position : SV_POSITION;
+    A3D_LOCATION(1) float2 TexCoord : TEXCOORD;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -20,14 +20,14 @@ struct VSOutput
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 struct PSOutput
 {
-    LOCATION(0) float4 Color : SV_TARGET0;
+    A3D_LOCATION(0) float4 Color : SV_TARGET0;
 };
 
 //-------------------------------------------------------------------------------------------------
 // Samplers and Textures
 //-------------------------------------------------------------------------------------------------
-RESOURCE(SamplerState ColorSmp, s0, 1);
-RESOURCE(Texture2D    ColorMap, t0, 2);
+A3D_RESOURCE(SamplerState ColorSmp, s0, 1);
+A3D_RESOURCE(Texture2D    ColorMap, t0, 2);
 
 
 //-------------------------------------------------------------------------------------------------

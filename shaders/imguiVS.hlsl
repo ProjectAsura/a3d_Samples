@@ -4,16 +4,16 @@
 // Copyright(c) Project Asura. All right reserved.
 //-------------------------------------------------------------------------------------------------
 
-#include "spirvHelper.hlsli"
+#include "a3dShader.hlsli"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // VSInput structure
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 struct VSInput
 {
-    LOCATION(0) float2 Position : POSITION;     //!< 位置座標.
-    LOCATION(5) float2 TexCoord : TEXCOORD0;    //!< テクスチャ座標.
-    LOCATION(1) float4 Color    : COLOR0;       //!< カラー. 
+    A3D_LOCATION(0) float2 Position : POSITION;     //!< 位置座標.
+    A3D_LOCATION(5) float2 TexCoord : TEXCOORD0;    //!< テクスチャ座標.
+    A3D_LOCATION(1) float4 Color    : COLOR0;       //!< カラー. 
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -21,15 +21,15 @@ struct VSInput
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 struct VSOutput
 {
-    LOCATION(0) float4 Position : SV_POSITION;  //!< 位置座標.
-    LOCATION(1) float4 Color    : COLOR;        //!< カラー.
-    LOCATION(2) float2 TexCoord : TEXCOORD;     //!< テクスチャ座標.
+    A3D_LOCATION(0) float4 Position : SV_POSITION;  //!< 位置座標.
+    A3D_LOCATION(1) float4 Color    : COLOR;        //!< カラー.
+    A3D_LOCATION(2) float2 TexCoord : TEXCOORD;     //!< テクスチャ座標.
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Transform constant buffer
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-RESOURCE(cbuffer Transform, b0, 0)
+A3D_RESOURCE(cbuffer Transform, b0, 0)
 {
     float4x4 Proj;      //!< 射影行列.
 };
@@ -45,6 +45,6 @@ VSOutput main(VSInput input)
     output.Color    = input.Color;
     output.TexCoord = input.TexCoord;
 
-    FLIP_Y(output.Position);
+    A3D_FLIP_Y(output.Position);
     return output;
 }

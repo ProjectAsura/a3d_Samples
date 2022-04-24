@@ -4,16 +4,16 @@
 // Copyright(c) Project Asura. All right reserved.
 //-------------------------------------------------------------------------------------------------
 
-#include "spirvHelper.hlsli"
+#include "a3dShader.hlsli"
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // VSOutput sturcture
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 struct VSOutput
 {
-    LOCATION(0) float4 Position : SV_POSITION;      //!< 位置座標
-    LOCATION(1) float4 Color    : COLOR;            //!< カラー
-    LOCATION(2) float2 TexCoord : TEXCOORD;         //!< テクスチャ座標.
+    A3D_LOCATION(0) float4 Position : SV_POSITION;      //!< 位置座標
+    A3D_LOCATION(1) float4 Color    : COLOR;            //!< カラー
+    A3D_LOCATION(2) float2 TexCoord : TEXCOORD;         //!< テクスチャ座標.
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -21,14 +21,14 @@ struct VSOutput
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 struct PSOutput
 {
-    LOCATION(0) float4 Target0  : SV_TARGET0;       //!< レンダーターゲット0.
+    A3D_LOCATION(0) float4 Target0  : SV_TARGET0;       //!< レンダーターゲット0.
 };
 
 //=================================================================================================
 // Samplers and Textures.
 //=================================================================================================
-RESOURCE(SamplerState   ColorSmp, s0, 1);      //!< カラーサンプラー.
-RESOURCE(Texture2D      ColorMap, t0, 2);      //!< カラーテクスチャ.
+A3D_RESOURCE(SamplerState   ColorSmp, s0, 1);      //!< カラーサンプラー.
+A3D_RESOURCE(Texture2D      ColorMap, t0, 2);      //!< カラーテクスチャ.
 
 
 //-------------------------------------------------------------------------------------------------
