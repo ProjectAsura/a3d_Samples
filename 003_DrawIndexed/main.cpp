@@ -128,7 +128,7 @@ bool InitA3D()
         g_pDevice->GetGraphicsQueue(&g_pGraphicsQueue);
     }
 
-    #if SAMPLE_IS_VULKAN && TARGET_PC
+    #if SAMPLE_IS_VULKAN && A3D_IS_WIN
         auto format = a3d::RESOURCE_FORMAT_B8G8R8A8_UNORM;
     #else
         auto format = a3d::RESOURCE_FORMAT_R8G8B8A8_UNORM;
@@ -467,7 +467,7 @@ void DrawA3D()
     { g_pFence->Wait(UINT32_MAX); }
 
     // ‰æ–Ê‚É•\Ž¦‚µ‚Ü‚·.
-    g_pGraphicsQueue->Present( g_pSwapChain );
+    g_pGraphicsQueue->Present(g_pSwapChain);
 }
 
 //-------------------------------------------------------------------------------------------------

@@ -186,7 +186,7 @@ void TermA3D()
     // ダブルバッファリソースの破棄.
     for(auto i=0; i<2; ++i)
     {
-        // カラービューの破棄.
+        // レンダーターゲットビューの破棄.
         a3d::SafeRelease(g_pRenderTargetView[i]);
 
         // カラーバッファの破棄.
@@ -250,6 +250,8 @@ void DrawA3D()
     {
         /* TODO */
     }
+    
+    // 表示用のバリアを設定する前に，フレームバッファの設定を解除する必要があります.
     pCmd->EndFrameBuffer();
 
     // 表示用にバリアを設定します.
@@ -272,7 +274,7 @@ void DrawA3D()
     { g_pFence->Wait(UINT32_MAX); }
 
     // 画面に表示します.
-    g_pGraphicsQueue->Present( g_pSwapChain );
+    g_pGraphicsQueue->Present(g_pSwapChain);
 }
 
 //-------------------------------------------------------------------------------------------------

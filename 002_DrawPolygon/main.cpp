@@ -47,12 +47,12 @@ a3d::IDescriptorSetLayout*  g_pDescriptorSetLayout  = nullptr;  //!< ƒfƒBƒXƒNƒŠƒ
 a3d::IPipelineState*        g_pPipelineState        = nullptr;  //!< ƒpƒCƒvƒ‰ƒCƒ“ƒXƒe[ƒg‚Å‚·.
 a3d::IBuffer*               g_pVertexBuffer         = nullptr;  //!< ’¸“_ƒoƒbƒtƒ@‚Å‚·.
 a3d::ITexture*              g_pColorBuffer[2]       = {};       //!< ƒJƒ‰[ƒoƒbƒtƒ@‚Å‚·.
-a3d::IRenderTargetView*     g_pRenderTargetView[2]  = {};       //!< ƒJƒ‰[ƒrƒ…[‚Å‚·.
+a3d::IRenderTargetView*     g_pRenderTargetView[2]  = {};       //!< ƒŒƒ“ƒ_[ƒ^[ƒQƒbƒgƒrƒ…[‚Å‚·.
 a3d::ICommandList*          g_pCommandList[2]       = {};       //!< ƒRƒ}ƒ“ƒhƒŠƒXƒg‚Å‚·.
 a3d::Viewport               g_Viewport              = {};       //!< ƒrƒ…[ƒ|[ƒg‚Å‚·.
 a3d::Rect                   g_Scissor               = {};       //!< ƒVƒU[‹éŒ`‚Å‚·.
 bool                        g_Prepare               = false;    //!< €”õ‚ªŠ®—¹‚µ‚½‚çtrue.
-SampleAllocator             g_Allocator;
+SampleAllocator             g_Allocator;                        //!< ƒAƒƒP[ƒ^.
 
 
 //-------------------------------------------------------------------------------------------------
@@ -463,7 +463,7 @@ void Resize( uint32_t w, uint32_t h, void* pUser )
 
     for(auto i=0; i<2; ++i)
     {
-        // ƒJƒ‰[ƒrƒ…[‚Ì”jŠü.
+        // ƒŒƒ“ƒ_[ƒ^[ƒQƒbƒgƒrƒ…[‚Ì”jŠü.
         a3d::SafeRelease(g_pRenderTargetView[i]);
 
         // ƒJƒ‰[ƒoƒbƒtƒ@‚Ì”jŠü.

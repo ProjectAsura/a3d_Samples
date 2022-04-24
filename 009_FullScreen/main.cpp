@@ -160,7 +160,7 @@ bool InitA3D()
 
     auto info = g_pDevice->GetInfo();
 
-    #if SAMPLE_IS_VULKAN && TARGET_PC
+    #if SAMPLE_IS_VULKAN && A3D_IS_WIN
         auto format = a3d::RESOURCE_FORMAT_B8G8R8A8_UNORM;
     #else
         auto format = a3d::RESOURCE_FORMAT_R8G8B8A8_UNORM;
