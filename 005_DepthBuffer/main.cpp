@@ -338,13 +338,15 @@ bool InitA3D()
     a3d::ShaderBinary vs = {};
     a3d::ShaderBinary ps = {};
     {
-        auto vsFilePath = GetShaderPathForSampleProgram("SimpleVS");
-        auto psFilePath = GetShaderPathForSampleProgram("SimplePS");
+        FixedSizeString vsPath;
+        FixedSizeString psPath;
+        GetShaderPath("SimpleVS", vsPath);
+        GetShaderPath("SimplePS", psPath);
 
-        if (!LoadShaderBinary(vsFilePath.c_str(), vs))
+        if (!LoadShaderBinary(vsPath.c_str(), vs))
         { return false; }
 
-        if (!LoadShaderBinary(psFilePath.c_str(), ps))
+        if (!LoadShaderBinary(psPath.c_str(), ps))
         {
             DisposeShaderBinary(vs);
             return false;

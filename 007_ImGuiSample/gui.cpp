@@ -339,13 +339,15 @@ bool GuiMgr::Init(a3d::IDevice* pDevice, const TargetViewInfo& info, IApp* pApp)
     a3d::ShaderBinary vs = {};
     a3d::ShaderBinary ps = {};
     {
-        auto vsFilePath = GetShaderPathForSampleProgram("imguiVS");
-        auto psFilePath = GetShaderPathForSampleProgram("imguiPS");
+        FixedSizeString vsPath;
+        FixedSizeString psPath;
+        GetShaderPath("imguiVS", vsPath);
+        GetShaderPath("imguiPS", psPath);
 
-        if (!LoadShaderBinary(vsFilePath.c_str(), vs))
+        if (!LoadShaderBinary(vsPath.c_str(), vs))
         { return false; }
 
-        if (!LoadShaderBinary(psFilePath.c_str(), ps))
+        if (!LoadShaderBinary(psPath.c_str(), ps))
         {
             DisposeShaderBinary(vs);
             return false;

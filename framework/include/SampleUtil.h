@@ -9,17 +9,40 @@
 // Includes
 //-------------------------------------------------------------------------------------------------
 #include <a3d.h>
-#include <string>
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// FixedSizeString
+///////////////////////////////////////////////////////////////////////////////////////////////////
+class FixedSizeString
+{
+public:
+    FixedSizeString();
+    FixedSizeString(const char* value);
+
+    const char* c_str() const;
+    size_t size() const;
+
+    FixedSizeString& operator =  (const FixedSizeString& value);
+    FixedSizeString& operator =  (const char* value);
+    FixedSizeString& operator += (const FixedSizeString& value);
+    FixedSizeString& operator += (const char* value);
+    FixedSizeString  operator +  (const FixedSizeString& value);
+    FixedSizeString  operator +  (const char* value);
+
+private:
+    char m_Strings[256] = {};
+};
 
 //-------------------------------------------------------------------------------------------------
 //! @brief      サンプルプログラムに使用するシェーダのディレクトリパスを取得します.
 //-------------------------------------------------------------------------------------------------
-std::string GetShaderPathForSampleProgram(const char* name);
+void GetShaderPath(const char* name, FixedSizeString& result);
 
 //-------------------------------------------------------------------------------------------------
 //! @brief      サンプルプログラムに使用するテクスチャのディレクトリパスを取得します.
 //-------------------------------------------------------------------------------------------------
-std::string GetTexturePathForSampleProgram(const char* path);
+void GetTexturePath(const char* name, FixedSizeString& result);
 
 //-------------------------------------------------------------------------------------------------
 //! @brief      シェーダバイナリを読み込みます.

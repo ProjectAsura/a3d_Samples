@@ -338,13 +338,15 @@ bool InitA3D()
     a3d::ShaderBinary vs = {};
     a3d::ShaderBinary ps = {};
     {
-        auto vsFilePath = GetShaderPathForSampleProgram("SimpleTexVS");
-        auto psFilePath = GetShaderPathForSampleProgram("SimpleTexPS");
+        FixedSizeString vsPath;
+        FixedSizeString psPath;
+        GetShaderPath("SimpleTexVS", vsPath);
+        GetShaderPath("SimpleTexPS", psPath);
 
-        if (!LoadShaderBinary(vsFilePath.c_str(), vs))
+        if (!LoadShaderBinary(vsPath.c_str(), vs))
         { return false; }
 
-        if (!LoadShaderBinary(psFilePath.c_str(), ps))
+        if (!LoadShaderBinary(psPath.c_str(), ps))
         {
             DisposeShaderBinary(vs);
             return false;
@@ -447,7 +449,8 @@ bool InitA3D()
 
     // テクスチャの生成.
     {
-        std::string path = GetTexturePathForSampleProgram("sample32bitRLE.tga");
+        FixedSizeString path;
+        GetTexturePath("sample32bitRLE.tga", path);
 
         Targa targa;
         if (!targa.Load(path.c_str()))

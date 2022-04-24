@@ -1,4 +1,4 @@
-//-------------------------------------------------------------------------------------------------
+ï»¿//-------------------------------------------------------------------------------------------------
 // File : main.cpp
 // Desc : Main Entry Point.
 // Copyright(c) Project Asura. All right reserved.
@@ -27,8 +27,8 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 struct Vertex
 {
-    Vec3 Position;  //!< ˆÊ’uÀ•W‚Å‚·.
-    Vec2 TexCoord;  //!< ƒeƒNƒXƒ`ƒƒÀ•W.
+    Vec3 Position;  //!< ä½ç½®åº§æ¨™ã§ã™.
+    Vec2 TexCoord;  //!< ãƒ†ã‚¯ã‚¹ãƒãƒ£åº§æ¨™.
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -36,8 +36,8 @@ struct Vertex
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 struct ColorVertex
 {
-    Vec3 Position;  //!< ˆÊ’uÀ•W‚Å‚·.
-    Vec4 Color;     //!< ’¸“_ƒJƒ‰[‚Å‚·.
+    Vec3 Position;  //!< ä½ç½®åº§æ¨™ã§ã™.
+    Vec4 Color;     //!< é ‚ç‚¹ã‚«ãƒ©ãƒ¼ã§ã™.
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -45,9 +45,9 @@ struct ColorVertex
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 struct Transform
 {
-    Mat4 World;     //!< ƒ[ƒ‹ƒhs—ñ‚Å‚·.
-    Mat4 View;      //!< ƒrƒ…[s—ñ‚Å‚·.
-    Mat4 Proj;      //!< Ë‰es—ñ‚Å‚·.
+    Mat4 World;     //!< ãƒ¯ãƒ¼ãƒ«ãƒ‰è¡Œåˆ—ã§ã™.
+    Mat4 View;      //!< ãƒ“ãƒ¥ãƒ¼è¡Œåˆ—ã§ã™.
+    Mat4 Proj;      //!< å°„å½±è¡Œåˆ—ã§ã™.
 };
 
 
@@ -62,79 +62,79 @@ void Resize(uint32_t w, uint32_t h, void* ptr);
 //-------------------------------------------------------------------------------------------------
 // Global Varaibles.
 //-------------------------------------------------------------------------------------------------
-IApp*                       g_pApp                  = nullptr;  //!< ƒEƒBƒ“ƒhƒE‚Ì¶¬‚ğs‚¤ƒwƒ‹ƒp[ƒNƒ‰ƒX‚Å‚·.
-a3d::IDevice*               g_pDevice               = nullptr;  //!< ƒfƒoƒCƒX‚Å‚·.
-a3d::ISwapChain*            g_pSwapChain            = nullptr;  //!< ƒXƒƒbƒvƒ`ƒFƒCƒ“‚Å‚·.
-a3d::IQueue*                g_pGraphicsQueue        = nullptr;  //!< ƒRƒ}ƒ“ƒhƒLƒ…[‚Å‚·.
-a3d::IFence*                g_pFence                = nullptr;  //!< ƒtƒFƒ“ƒX‚Å‚·.
-a3d::IDescriptorSetLayout*  g_pDescriptorSetLayout  = nullptr;  //!< ƒfƒBƒXƒNƒŠƒvƒ^ƒZƒbƒgƒŒƒCƒAƒEƒg‚Å‚·.
-a3d::IPipelineState*        g_pPipelineState        = nullptr;  //!< ƒpƒCƒvƒ‰ƒCƒ“ƒXƒe[ƒg‚Å‚·.
-a3d::IBuffer*               g_pVertexBuffer         = nullptr;  //!< ’¸“_ƒoƒbƒtƒ@‚Å‚·.
-a3d::IBuffer*               g_pIndexBuffer          = nullptr;  //!< ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@‚Å‚·.
-a3d::ITexture*              g_pDepthBuffer          = nullptr;  //!< [“xƒoƒbƒtƒ@‚Å‚·.
-a3d::IDepthStencilView*     g_pDepthView            = nullptr;  //!< [“xƒXƒeƒ“ƒVƒ‹ƒ^[ƒQƒbƒgƒrƒ…[‚Å‚·.
-a3d::ISampler*              g_pSampler              = nullptr;  //!< ƒTƒ“ƒvƒ‰[‚Å‚·.
-a3d::ITexture*              g_pOffScreenBuffer      = nullptr;  //!< ƒIƒtƒXƒNƒŠ[ƒ“ƒoƒbƒtƒ@‚Å‚·.
-a3d::IRenderTargetView*     g_pOffScreenTargetView  = nullptr;  //!< ƒIƒtƒXƒNƒŠ[ƒ“ƒrƒ…[‚Å‚·.
-a3d::IShaderResourceView*   g_pOffScreenTextureView = nullptr;  //!< ƒIƒtƒXƒNƒŠ[ƒ“ƒVƒF[ƒ_ƒŠƒ\[ƒXƒrƒ…[‚Å‚·.
-a3d::IBuffer*               g_pTriangleVertexBuffer = nullptr;  //!< OŠpŒ`‚Ì’¸“_ƒoƒbƒtƒ@.
-a3d::IPipelineState*        g_pOffScreenPipeline    = nullptr;  //!< ƒIƒtƒXƒNƒŠ[ƒ“•`‰æ—pƒpƒCƒvƒ‰ƒCƒ“ƒXƒe[ƒg‚Å‚·.
-a3d::IDescriptorSetLayout*  g_pOffScreenDSetLayout  = nullptr;  //!< ƒIƒtƒXƒNƒŠ[ƒ“•`‰æ—pƒfƒBƒXƒNƒŠƒvƒ^ƒZƒbƒgƒŒƒCƒAƒEƒg‚Å‚·.
-a3d::ITexture*              g_pColorBuffer[2]       = {};       //!< ƒJƒ‰[ƒoƒbƒtƒ@‚Å‚·.
-a3d::IRenderTargetView*     g_pColorView[2]         = {};       //!< ƒJƒ‰[ƒrƒ…[‚Å‚·.
-a3d::ICommandList*          g_pCommandList[2]       = {};       //!< ƒRƒ}ƒ“ƒhƒŠƒXƒg‚Å‚·.
-a3d::IBuffer*               g_pConstantBuffer[2]    = {};       //!< ’è”ƒoƒbƒtƒ@‚Å‚·.
-a3d::IConstantBufferView*   g_pConstantView[2]      = {};       //!< ’è”ƒoƒbƒtƒ@ƒrƒ…[‚Å‚·.
-a3d::IDescriptorSet*        g_pDescriptorSet[2]     = {};       //!< ƒfƒBƒXƒNƒŠƒvƒ^ƒZƒbƒg‚Å‚·.
-a3d::Viewport               g_Viewport              = {};       //!< ƒrƒ…[ƒ|[ƒg‚Å‚·.
-a3d::Rect                   g_Scissor               = {};       //!< ƒVƒU[‹éŒ`‚Å‚·.
-Transform                   g_Transform             = {};       //!< •ÏŠ·s—ñ‚Å‚·.
-float                       g_RotateAngle           = 0.0f;     //!< ‰ñ“]Šp‚Å‚·.
-void*                       g_pCbHead[2]            = {};       //!< ’è”ƒoƒbƒtƒ@‚Ìæ“ªƒ|ƒCƒ“ƒ^‚Å‚·.
-float                       g_ClearColor[4]         = {};       //!< ƒNƒŠƒAƒJƒ‰[‚Å‚·.
-float                       g_RotateSpeed           = 1.0f;     //!< ‰ñ“]‘¬“x‚Å‚·.
-bool                        g_Prepare               = false;    //!< €”õ‚ªo—ˆ‚½‚çtrue.
-SampleAllocator             g_Allocator;                        //!< ƒAƒƒP[ƒ^.
+IApp*                       g_pApp                  = nullptr;  //!< ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ã®ç”Ÿæˆã‚’è¡Œã†ãƒ˜ãƒ«ãƒ‘ãƒ¼ã‚¯ãƒ©ã‚¹ã§ã™.
+a3d::IDevice*               g_pDevice               = nullptr;  //!< ãƒ‡ãƒã‚¤ã‚¹ã§ã™.
+a3d::ISwapChain*            g_pSwapChain            = nullptr;  //!< ã‚¹ãƒ¯ãƒƒãƒ—ãƒã‚§ã‚¤ãƒ³ã§ã™.
+a3d::IQueue*                g_pGraphicsQueue        = nullptr;  //!< ã‚³ãƒãƒ³ãƒ‰ã‚­ãƒ¥ãƒ¼ã§ã™.
+a3d::IFence*                g_pFence                = nullptr;  //!< ãƒ•ã‚§ãƒ³ã‚¹ã§ã™.
+a3d::IDescriptorSetLayout*  g_pDescriptorSetLayout  = nullptr;  //!< ãƒ‡ã‚£ã‚¹ã‚¯ãƒªãƒ—ã‚¿ã‚»ãƒƒãƒˆãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆã§ã™.
+a3d::IPipelineState*        g_pPipelineState        = nullptr;  //!< ãƒ‘ã‚¤ãƒ—ãƒ©ã‚¤ãƒ³ã‚¹ãƒ†ãƒ¼ãƒˆã§ã™.
+a3d::IBuffer*               g_pVertexBuffer         = nullptr;  //!< é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã§ã™.
+a3d::IBuffer*               g_pIndexBuffer          = nullptr;  //!< ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã§ã™.
+a3d::ITexture*              g_pDepthBuffer          = nullptr;  //!< æ·±åº¦ãƒãƒƒãƒ•ã‚¡ã§ã™.
+a3d::IDepthStencilView*     g_pDepthView            = nullptr;  //!< æ·±åº¦ã‚¹ãƒ†ãƒ³ã‚·ãƒ«ã‚¿ãƒ¼ã‚²ãƒƒãƒˆãƒ“ãƒ¥ãƒ¼ã§ã™.
+a3d::ISampler*              g_pSampler              = nullptr;  //!< ã‚µãƒ³ãƒ—ãƒ©ãƒ¼ã§ã™.
+a3d::ITexture*              g_pOffScreenBuffer      = nullptr;  //!< ã‚ªãƒ•ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ãƒãƒƒãƒ•ã‚¡ã§ã™.
+a3d::IRenderTargetView*     g_pOffScreenTargetView  = nullptr;  //!< ã‚ªãƒ•ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ãƒ“ãƒ¥ãƒ¼ã§ã™.
+a3d::IShaderResourceView*   g_pOffScreenTextureView = nullptr;  //!< ã‚ªãƒ•ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ã‚·ã‚§ãƒ¼ãƒ€ãƒªã‚½ãƒ¼ã‚¹ãƒ“ãƒ¥ãƒ¼ã§ã™.
+a3d::IBuffer*               g_pTriangleVertexBuffer = nullptr;  //!< ä¸‰è§’å½¢ã®é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡.
+a3d::IPipelineState*        g_pOffScreenPipeline    = nullptr;  //!< ã‚ªãƒ•ã‚¹ã‚¯ãƒªãƒ¼ãƒ³æç”»ç”¨ãƒ‘ã‚¤ãƒ—ãƒ©ã‚¤ãƒ³ã‚¹ãƒ†ãƒ¼ãƒˆã§ã™.
+a3d::IDescriptorSetLayout*  g_pOffScreenDSetLayout  = nullptr;  //!< ã‚ªãƒ•ã‚¹ã‚¯ãƒªãƒ¼ãƒ³æç”»ç”¨ãƒ‡ã‚£ã‚¹ã‚¯ãƒªãƒ—ã‚¿ã‚»ãƒƒãƒˆãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆã§ã™.
+a3d::ITexture*              g_pColorBuffer[2]       = {};       //!< ã‚«ãƒ©ãƒ¼ãƒãƒƒãƒ•ã‚¡ã§ã™.
+a3d::IRenderTargetView*     g_pColorView[2]         = {};       //!< ã‚«ãƒ©ãƒ¼ãƒ“ãƒ¥ãƒ¼ã§ã™.
+a3d::ICommandList*          g_pCommandList[2]       = {};       //!< ã‚³ãƒãƒ³ãƒ‰ãƒªã‚¹ãƒˆã§ã™.
+a3d::IBuffer*               g_pConstantBuffer[2]    = {};       //!< å®šæ•°ãƒãƒƒãƒ•ã‚¡ã§ã™.
+a3d::IConstantBufferView*   g_pConstantView[2]      = {};       //!< å®šæ•°ãƒãƒƒãƒ•ã‚¡ãƒ“ãƒ¥ãƒ¼ã§ã™.
+a3d::IDescriptorSet*        g_pDescriptorSet[2]     = {};       //!< ãƒ‡ã‚£ã‚¹ã‚¯ãƒªãƒ—ã‚¿ã‚»ãƒƒãƒˆã§ã™.
+a3d::Viewport               g_Viewport              = {};       //!< ãƒ“ãƒ¥ãƒ¼ãƒãƒ¼ãƒˆã§ã™.
+a3d::Rect                   g_Scissor               = {};       //!< ã‚·ã‚¶ãƒ¼çŸ©å½¢ã§ã™.
+Transform                   g_Transform             = {};       //!< å¤‰æ›è¡Œåˆ—ã§ã™.
+float                       g_RotateAngle           = 0.0f;     //!< å›è»¢è§’ã§ã™.
+void*                       g_pCbHead[2]            = {};       //!< å®šæ•°ãƒãƒƒãƒ•ã‚¡ã®å…ˆé ­ãƒã‚¤ãƒ³ã‚¿ã§ã™.
+float                       g_ClearColor[4]         = {};       //!< ã‚¯ãƒªã‚¢ã‚«ãƒ©ãƒ¼ã§ã™.
+float                       g_RotateSpeed           = 1.0f;     //!< å›è»¢é€Ÿåº¦ã§ã™.
+bool                        g_Prepare               = false;    //!< æº–å‚™ãŒå‡ºæ¥ãŸã‚‰true.
+SampleAllocator             g_Allocator;                        //!< ã‚¢ãƒ­ã‚±ãƒ¼ã‚¿.
 
 //-------------------------------------------------------------------------------------------------
-//      ƒƒCƒ“ƒGƒ“ƒgƒŠ[ƒ|ƒCƒ“ƒg‚Å‚·.
+//      ãƒ¡ã‚¤ãƒ³ã‚¨ãƒ³ãƒˆãƒªãƒ¼ãƒã‚¤ãƒ³ãƒˆã§ã™.
 //-------------------------------------------------------------------------------------------------
 void Main()
 {
-    // ƒEƒBƒ“ƒhƒE¶¬.
+    // ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ç”Ÿæˆ.
     if (!CreateApp(960, 540, &g_pApp))
     { return; }
 
-    // ƒŠƒTƒCƒY‚ÌƒR[ƒ‹ƒoƒbƒNŠÖ”‚ğİ’è.
+    // ãƒªã‚µã‚¤ã‚ºæ™‚ã®ã‚³ãƒ¼ãƒ«ãƒãƒƒã‚¯é–¢æ•°ã‚’è¨­å®š.
     g_pApp->SetResizeCallback(Resize, nullptr);
 
-    // A3D‰Šú‰».
+    // A3DåˆæœŸåŒ–.
     if (!InitA3D())
     {
         g_pApp->Release();
         return;
     }
 
-    // ƒƒCƒ“ƒ‹[ƒv.
+    // ãƒ¡ã‚¤ãƒ³ãƒ«ãƒ¼ãƒ—.
     while( g_pApp->IsLoop() )
     {
-        // •`‰æˆ—.
+        // æç”»å‡¦ç†.
         DrawA3D();
     }
 
-    // Œãn––.
+    // å¾Œå§‹æœ«.
     TermA3D();
     g_pApp->Release();
 }
 
 //-------------------------------------------------------------------------------------------------
-//      A3D‚Ì‰Šú‰»‚ğs‚¢‚Ü‚·.
+//      A3Dã®åˆæœŸåŒ–ã‚’è¡Œã„ã¾ã™.
 //-------------------------------------------------------------------------------------------------
 bool InitA3D()
 {
     g_Prepare = false;
 
-    // ƒOƒ‰ƒtƒBƒbƒNƒXƒVƒXƒeƒ€‚Ì‰Šú‰».
+    // ã‚°ãƒ©ãƒ•ã‚£ãƒƒã‚¯ã‚¹ã‚·ã‚¹ãƒ†ãƒ ã®åˆæœŸåŒ–.
     {
         a3d::SystemDesc desc = {};
         desc.pSystemAllocator = &g_Allocator;
@@ -143,28 +143,28 @@ bool InitA3D()
         { return false; }
     }
 
-    // ƒfƒoƒCƒX‚Ì¶¬.
+    // ãƒ‡ãƒã‚¤ã‚¹ã®ç”Ÿæˆ.
     {
         a3d::DeviceDesc desc = {};
 
         desc.EnableDebug = true;
 
-        // Å‘åƒfƒBƒXƒNƒŠƒvƒ^”‚ğİ’è.
+        // æœ€å¤§ãƒ‡ã‚£ã‚¹ã‚¯ãƒªãƒ—ã‚¿æ•°ã‚’è¨­å®š.
         desc.MaxColorTargetCount            = 256;
         desc.MaxDepthTargetCount            = 256;
         desc.MaxShaderResourceCount         = 256;
         desc.MaxSamplerCount                = 256;
 
-        // Å‘åƒTƒuƒ~ƒbƒg”‚ğİ’è.
+        // æœ€å¤§ã‚µãƒ–ãƒŸãƒƒãƒˆæ•°ã‚’è¨­å®š.
         desc.MaxGraphicsQueueSubmitCount    = 256;
         desc.MaxCopyQueueSubmitCount        = 256;
         desc.MaxComputeQueueSubmitCount     = 256;
 
-        // ƒfƒoƒCƒX‚ğ¶¬.
+        // ãƒ‡ãƒã‚¤ã‚¹ã‚’ç”Ÿæˆ.
         if (!a3d::CreateDevice(&desc, &g_pDevice))
         { return false; }
 
-        // ƒRƒ}ƒ“ƒhƒLƒ…[‚ğæ“¾.
+        // ã‚³ãƒãƒ³ãƒ‰ã‚­ãƒ¥ãƒ¼ã‚’å–å¾—.
         g_pDevice->GetGraphicsQueue(&g_pGraphicsQueue);
     }
 
@@ -176,7 +176,7 @@ bool InitA3D()
         auto format = a3d::RESOURCE_FORMAT_R8G8B8A8_UNORM;
     #endif
 
-    // ƒXƒƒbƒvƒ`ƒFƒCƒ“‚Ì¶¬.
+    // ã‚¹ãƒ¯ãƒƒãƒ—ãƒã‚§ã‚¤ãƒ³ã®ç”Ÿæˆ.
     {
         a3d::SwapChainDesc desc = {};
         desc.Extent.Width   = g_pApp->GetWidth();
@@ -192,7 +192,7 @@ bool InitA3D()
         if (!g_pDevice->CreateSwapChain(&desc, &g_pSwapChain))
         { return false; }
 
-        // ƒXƒƒbƒvƒ`ƒFƒCƒ“‚©‚çƒoƒbƒtƒ@‚ğæ“¾.
+        // ã‚¹ãƒ¯ãƒƒãƒ—ãƒã‚§ã‚¤ãƒ³ã‹ã‚‰ãƒãƒƒãƒ•ã‚¡ã‚’å–å¾—.
         g_pSwapChain->GetBuffer(0, &g_pColorBuffer[0]);
         g_pSwapChain->GetBuffer(1, &g_pColorBuffer[1]);
 
@@ -211,7 +211,7 @@ bool InitA3D()
         }
     }
 
-    // [“xƒoƒbƒtƒ@‚Ì¶¬.
+    // æ·±åº¦ãƒãƒƒãƒ•ã‚¡ã®ç”Ÿæˆ.
     {
         a3d::TextureDesc desc = {};
         desc.Dimension          = a3d::RESOURCE_DIMENSION_TEXTURE2D;
@@ -241,7 +241,7 @@ bool InitA3D()
         { return false; }
     }
 
-    // ƒRƒ}ƒ“ƒhƒŠƒXƒg‚ğ¶¬.
+    // ã‚³ãƒãƒ³ãƒ‰ãƒªã‚¹ãƒˆã‚’ç”Ÿæˆ.
     {
         a3d::CommandListDesc desc = {};
         desc.Type       = a3d::COMMANDLIST_TYPE_DIRECT;
@@ -254,13 +254,13 @@ bool InitA3D()
         }
     }
 
-    // ƒtƒFƒ“ƒX‚ğ¶¬.
+    // ãƒ•ã‚§ãƒ³ã‚¹ã‚’ç”Ÿæˆ.
     {
         if (!g_pDevice->CreateFence(&g_pFence))
         { return false; }
     }
 
-    // ’¸“_ƒoƒbƒtƒ@‚ğ¶¬.
+    // é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã‚’ç”Ÿæˆ.
     {
         Vertex vertices[] = {
             { Vec3( 1.0f, -1.0f, 0.0f), Vec2(1.0f, 0.0f) },
@@ -288,7 +288,7 @@ bool InitA3D()
         g_pVertexBuffer->Unmap();
     }
 
-    // ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@‚ğ¶¬.
+    // ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã‚’ç”Ÿæˆ.
     {
         uint32_t indices[] = {
             0, 1, 2,
@@ -314,7 +314,7 @@ bool InitA3D()
         g_pIndexBuffer->Unmap();
     }
 
-    // ’è”ƒoƒbƒtƒ@‚ğ¶¬.
+    // å®šæ•°ãƒãƒƒãƒ•ã‚¡ã‚’ç”Ÿæˆ.
     {
         auto stride = a3d::RoundUp<uint32_t>( sizeof(Transform), info.ConstantBufferMemoryAlignment );
 
@@ -351,24 +351,26 @@ bool InitA3D()
         g_Transform.Proj  = Mat4::PersFov(ToRadian(45.0f), aspect, 0.1f, 1000.0f);
     }
 
-    // ƒVƒF[ƒ_ƒoƒCƒiƒŠ‚ğ“Ç‚İ‚İ‚Ü‚·.
+    // ã‚·ã‚§ãƒ¼ãƒ€ãƒã‚¤ãƒŠãƒªã‚’èª­ã¿è¾¼ã¿ã¾ã™.
     a3d::ShaderBinary vs = {};
     a3d::ShaderBinary ps = {};
     {
-        auto vsFilePath = GetShaderPathForSampleProgram("simpleTexVS");
-        auto psFilePath = GetShaderPathForSampleProgram("simpleTexPS");
+        FixedSizeString vsPath;
+        FixedSizeString psPath;
+        GetShaderPath("simpleTexVS", vsPath);
+        GetShaderPath("simpleTexPS", psPath);
 
-        if (!LoadShaderBinary(vsFilePath.c_str(), vs))
+        if (!LoadShaderBinary(vsPath.c_str(), vs))
         { return false; }
 
-        if (!LoadShaderBinary(psFilePath.c_str(), ps))
+        if (!LoadShaderBinary(psPath.c_str(), ps))
         {
             DisposeShaderBinary(vs);
             return false;
         }
     }
 
-    // ƒfƒBƒXƒNƒŠƒvƒ^ƒZƒbƒgƒŒƒCƒAƒEƒg‚ğ¶¬‚µ‚Ü‚·.
+    // ãƒ‡ã‚£ã‚¹ã‚¯ãƒªãƒ—ã‚¿ã‚»ãƒƒãƒˆãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆã‚’ç”Ÿæˆã—ã¾ã™.
     {
     #if SAMPLE_IS_VULKAN || SAMPLE_IS_D3D12 || SAMPLE_IS_D3D11
         a3d::DescriptorSetLayoutDesc desc = {};
@@ -415,41 +417,41 @@ bool InitA3D()
         }
     }
 
-    // ƒOƒ‰ƒtƒBƒbƒNƒXƒpƒCƒvƒ‰ƒCƒ“ƒXƒe[ƒg‚ğ¶¬‚µ‚Ü‚·.
+    // ã‚°ãƒ©ãƒ•ã‚£ãƒƒã‚¯ã‚¹ãƒ‘ã‚¤ãƒ—ãƒ©ã‚¤ãƒ³ã‚¹ãƒ†ãƒ¼ãƒˆã‚’ç”Ÿæˆã—ã¾ã™.
     {
-        // “ü—Í—v‘f‚Å‚·.
+        // å…¥åŠ›è¦ç´ ã§ã™.
         a3d::InputElementDesc inputElements[] = {
             { "POSITION", 0, 0, a3d::RESOURCE_FORMAT_R32G32B32_FLOAT , 0,  0, a3d::INPUT_CLASSIFICATION_PER_VERTEX },
             { "TEXCOORD", 0, 5, a3d::RESOURCE_FORMAT_R32G32_FLOAT    , 0, 12, a3d::INPUT_CLASSIFICATION_PER_VERTEX },
         };
 
-        // “ü—ÍƒŒƒCƒAƒEƒg‚Å‚·.
+        // å…¥åŠ›ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆã§ã™.
         a3d::InputLayoutDesc inputLayout = {};
         inputLayout.ElementCount = 2;
         inputLayout.pElements    = inputElements;
 
-        // ƒXƒeƒ“ƒVƒ‹ƒeƒXƒgİ’è‚Å‚·.
+        // ã‚¹ãƒ†ãƒ³ã‚·ãƒ«ãƒ†ã‚¹ãƒˆè¨­å®šã§ã™.
         a3d::StencilTestDesc stencilTest = {};
         stencilTest.StencilFailOp      = a3d::STENCIL_OP_KEEP;
         stencilTest.StencilDepthFailOp = a3d::STENCIL_OP_KEEP;
         stencilTest.StencilFailOp      = a3d::STENCIL_OP_KEEP;
         stencilTest.StencilCompareOp   = a3d::COMPARE_OP_NEVER;
 
-        // ƒOƒ‰ƒtƒBƒbƒNƒXƒpƒCƒvƒ‰ƒCƒ“ƒXƒe[ƒg‚ğİ’è‚µ‚Ü‚·.
+        // ã‚°ãƒ©ãƒ•ã‚£ãƒƒã‚¯ã‚¹ãƒ‘ã‚¤ãƒ—ãƒ©ã‚¤ãƒ³ã‚¹ãƒ†ãƒ¼ãƒˆã‚’è¨­å®šã—ã¾ã™.
         a3d::GraphicsPipelineStateDesc desc = {};
 
-        // ƒVƒF[ƒ_‚Ìİ’è.
+        // ã‚·ã‚§ãƒ¼ãƒ€ã®è¨­å®š.
         desc.VS = vs;
         desc.PS = ps;
 
-        // ƒuƒŒƒ“ƒhƒXƒe[ƒg‚Ìİ’è.
+        // ãƒ–ãƒ¬ãƒ³ãƒ‰ã‚¹ãƒ†ãƒ¼ãƒˆã®è¨­å®š.
         desc.BlendState.IndependentBlendEnable          = false;
         desc.BlendState.LogicOpEnable                   = false;
         desc.BlendState.LogicOp                         = a3d::LOGIC_OP_NOOP;
         for(auto i=0; i<8; ++i)
         { desc.BlendState.RenderTarget[i] = a3d::ColorBlendState::Opaque(); }
 
-        // ƒ‰ƒXƒ^ƒ‰ƒCƒU\ƒXƒe[ƒg‚Ìİ’è.
+        // ãƒ©ã‚¹ã‚¿ãƒ©ã‚¤ã‚¶â€•ã‚¹ãƒ†ãƒ¼ãƒˆã®è¨­å®š.
         desc.RasterizerState.PolygonMode                = a3d::POLYGON_MODE_SOLID;
         desc.RasterizerState.CullMode                   = a3d::CULL_MODE_NONE;
         desc.RasterizerState.FrontCounterClockWise      = false;
@@ -459,44 +461,44 @@ bool InitA3D()
         desc.RasterizerState.DepthClipEnable            = false;
         desc.RasterizerState.EnableConservativeRaster   = false;
         
-        // ƒ}ƒ‹ƒ`ƒTƒ“ƒvƒ‹ƒXƒe[ƒg‚Ìİ’è.
+        // ãƒãƒ«ãƒã‚µãƒ³ãƒ—ãƒ«ã‚¹ãƒ†ãƒ¼ãƒˆã®è¨­å®š.
         desc.MultiSampleState.EnableAlphaToCoverage = false;
         desc.MultiSampleState.EnableMultiSample     = false;
         desc.MultiSampleState.SampleCount           = 1;
 
-        // [“xƒXƒe[ƒg‚Ìİ’è.
+        // æ·±åº¦ã‚¹ãƒ†ãƒ¼ãƒˆã®è¨­å®š.
         desc.DepthState.DepthTestEnable      = true;
         desc.DepthState.DepthWriteEnable     = true;
         desc.DepthState.DepthCompareOp       = a3d::COMPARE_OP_LEQUAL;
 
-        // ƒXƒeƒ“ƒVƒ‹ƒXƒe[ƒg‚Ìİ’è.
+        // ã‚¹ãƒ†ãƒ³ã‚·ãƒ«ã‚¹ãƒ†ãƒ¼ãƒˆã®è¨­å®š.
         desc.StencilState.StencilTestEnable    = false;
         desc.StencilState.StencllReadMask      = 0;
         desc.StencilState.StencilWriteMask     = 0;
         desc.StencilState.FrontFace            = stencilTest;
         desc.StencilState.BackFace             = stencilTest;
 
-        // ƒeƒbƒZƒŒ[ƒVƒ‡ƒ“ƒXƒe[ƒg‚Ìİ’è.
+        // ãƒ†ãƒƒã‚»ãƒ¬ãƒ¼ã‚·ãƒ§ãƒ³ã‚¹ãƒ†ãƒ¼ãƒˆã®è¨­å®š.
         desc.TessellationState.PatchControlCount = 0;
 
-        // “ü—ÍƒAƒEƒg‚Ìİ’è.
+        // å…¥åŠ›ã‚¢ã‚¦ãƒˆã®è¨­å®š.
         desc.InputLayout = inputLayout;
 
-        // ƒfƒBƒXƒNƒŠƒvƒ^ƒZƒbƒgƒŒƒCƒAƒEƒg‚Ìİ’è.
+        // ãƒ‡ã‚£ã‚¹ã‚¯ãƒªãƒ—ã‚¿ã‚»ãƒƒãƒˆãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆã®è¨­å®š.
         desc.pLayout = g_pDescriptorSetLayout;
         
-        // ƒvƒŠƒ~ƒeƒBƒuƒgƒ|ƒƒW[‚Ìİ’è.
+        // ãƒ—ãƒªãƒŸãƒ†ã‚£ãƒ–ãƒˆãƒãƒ­ã‚¸ãƒ¼ã®è¨­å®š.
         desc.PrimitiveTopology = a3d::PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
-        // ƒtƒH[ƒ}ƒbƒg‚Ìİ’è.
+        // ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆã®è¨­å®š.
         desc.RenderTargetCount  = 1;
         desc.RenderTarget[0]    = format;
         desc.DepthTarget        = a3d::RESOURCE_FORMAT_D32_FLOAT;
 
-        // ƒLƒƒƒbƒVƒ…Ï‚İƒpƒCƒvƒ‰ƒCƒ“ƒXƒe[ƒg‚Ìİ’è.
+        // ã‚­ãƒ£ãƒƒã‚·ãƒ¥æ¸ˆã¿ãƒ‘ã‚¤ãƒ—ãƒ©ã‚¤ãƒ³ã‚¹ãƒ†ãƒ¼ãƒˆã®è¨­å®š.
         desc.pCachedPSO = nullptr;
 
-        // ƒOƒ‰ƒtƒBƒbƒNƒXƒpƒCƒvƒ‰ƒCƒ“ƒXƒe[ƒg‚Ì¶¬.
+        // ã‚°ãƒ©ãƒ•ã‚£ãƒƒã‚¯ã‚¹ãƒ‘ã‚¤ãƒ—ãƒ©ã‚¤ãƒ³ã‚¹ãƒ†ãƒ¼ãƒˆã®ç”Ÿæˆ.
         if (!g_pDevice->CreateGraphicsPipeline(&desc, &g_pPipelineState))
         {
             DisposeShaderBinary(vs);
@@ -504,11 +506,11 @@ bool InitA3D()
             return false;
         }
     }
-     // •s—v‚É‚È‚Á‚½‚Ì‚Å”jŠü‚µ‚Ü‚·.
+     // ä¸è¦ã«ãªã£ãŸã®ã§ç ´æ£„ã—ã¾ã™.
     DisposeShaderBinary(vs);
     DisposeShaderBinary(ps);
 
-    // ƒTƒ“ƒvƒ‰[‚Ì¶¬.
+    // ã‚µãƒ³ãƒ—ãƒ©ãƒ¼ã®ç”Ÿæˆ.
     {
         a3d::SamplerDesc desc = {};
         desc.MinFilter          = a3d::FILTER_MODE_LINEAR;
@@ -530,7 +532,7 @@ bool InitA3D()
         { return false; }
     }
 
-    // ’¸“_ƒoƒbƒtƒ@‚ğ¶¬.
+    // é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã‚’ç”Ÿæˆ.
     {
         ColorVertex vertices[] = {
             { Vec3( 0.5f, -0.5f, 0.0f), Vec4(1.0f, 0.0f, 0.0f, 1.0f) },
@@ -557,7 +559,7 @@ bool InitA3D()
         g_pTriangleVertexBuffer->Unmap();
     }
 
-    // ƒIƒtƒXƒNƒŠ[ƒ“ƒ^[ƒQƒbƒg‚Ì¶¬.
+    // ã‚ªãƒ•ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®ç”Ÿæˆ.
     {
         a3d::TextureDesc desc = {};
         desc.Dimension          = a3d::RESOURCE_DIMENSION_TEXTURE2D;
@@ -616,7 +618,7 @@ bool InitA3D()
         a3d::SafeRelease(pQueue);
     }
 
-    // ƒIƒtƒXƒNƒŠ[ƒ“—pƒfƒBƒXƒNƒŠƒvƒ^ƒZƒbƒgƒŒƒCƒAƒEƒg‚ğ¶¬.
+    // ã‚ªãƒ•ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ç”¨ãƒ‡ã‚£ã‚¹ã‚¯ãƒªãƒ—ã‚¿ã‚»ãƒƒãƒˆãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆã‚’ç”Ÿæˆ.
     {
         a3d::DescriptorSetLayoutDesc desc = {};
         desc.EntryCount  = 0;
@@ -626,55 +628,57 @@ bool InitA3D()
         { return false; }
     }
 
-    // ƒIƒtƒXƒNƒŠ[ƒ“•`‰æ—pƒVƒF[ƒ_‚ğ“Ç‚İ‚İ‚Ü‚·.
+    // ã‚ªãƒ•ã‚¹ã‚¯ãƒªãƒ¼ãƒ³æç”»ç”¨ã‚·ã‚§ãƒ¼ãƒ€ã‚’èª­ã¿è¾¼ã¿ã¾ã™.
     {
-        auto vsFilePath = GetShaderPathForSampleProgram("simpleQuadVS");
-        auto psFilePath = GetShaderPathForSampleProgram("simpleQuadPS");
+        FixedSizeString vsPath;
+        FixedSizeString psPath;
+        GetShaderPath("simpleQuadVS", vsPath);
+        GetShaderPath("simpleQuadPS", psPath);
 
-        if (!LoadShaderBinary(vsFilePath.c_str(), vs))
+        if (!LoadShaderBinary(vsPath.c_str(), vs))
         { return false; }
 
-        if (!LoadShaderBinary(psFilePath.c_str(), ps))
+        if (!LoadShaderBinary(psPath.c_str(), ps))
         {
             DisposeShaderBinary(vs);
             return false;
         }
     }
 
-    // ƒOƒ‰ƒtƒBƒbƒNƒXƒpƒCƒvƒ‰ƒCƒ“ƒXƒe[ƒg‚ğ¶¬‚µ‚Ü‚·.
+    // ã‚°ãƒ©ãƒ•ã‚£ãƒƒã‚¯ã‚¹ãƒ‘ã‚¤ãƒ—ãƒ©ã‚¤ãƒ³ã‚¹ãƒ†ãƒ¼ãƒˆã‚’ç”Ÿæˆã—ã¾ã™.
     {
-        // “ü—Í—v‘f‚Å‚·.
+        // å…¥åŠ›è¦ç´ ã§ã™.
         a3d::InputElementDesc inputElements[] = {
             { "POSITION", 0, 0, a3d::RESOURCE_FORMAT_R32G32B32_FLOAT   , 0,  0, a3d::INPUT_CLASSIFICATION_PER_VERTEX },
             { "COLOR"   , 0, 1, a3d::RESOURCE_FORMAT_R32G32B32A32_FLOAT, 0, 12, a3d::INPUT_CLASSIFICATION_PER_VERTEX },
         };
 
-        // “ü—ÍƒŒƒCƒAƒEƒg‚Å‚·.
+        // å…¥åŠ›ãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆã§ã™.
         a3d::InputLayoutDesc inputLayout = {};
         inputLayout.ElementCount = 2;
         inputLayout.pElements    = inputElements;
 
-        // ƒOƒ‰ƒtƒBƒbƒNƒXƒpƒCƒvƒ‰ƒCƒ“ƒXƒe[ƒg‚ğİ’è‚µ‚Ü‚·.
+        // ã‚°ãƒ©ãƒ•ã‚£ãƒƒã‚¯ã‚¹ãƒ‘ã‚¤ãƒ—ãƒ©ã‚¤ãƒ³ã‚¹ãƒ†ãƒ¼ãƒˆã‚’è¨­å®šã—ã¾ã™.
         a3d::GraphicsPipelineStateDesc desc = a3d::GraphicsPipelineStateDesc::Default();
 
-        // ƒVƒF[ƒ_‚Ìİ’è.
+        // ã‚·ã‚§ãƒ¼ãƒ€ã®è¨­å®š.
         desc.VS = vs;
         desc.PS = ps;
 
-        // “ü—ÍƒAƒEƒg‚Ìİ’è.
+        // å…¥åŠ›ã‚¢ã‚¦ãƒˆã®è¨­å®š.
         desc.InputLayout = inputLayout;
 
-        // ƒfƒBƒXƒNƒŠƒvƒ^ƒZƒbƒgƒŒƒCƒAƒEƒg‚Ìİ’è.
+        // ãƒ‡ã‚£ã‚¹ã‚¯ãƒªãƒ—ã‚¿ã‚»ãƒƒãƒˆãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆã®è¨­å®š.
         desc.pLayout = g_pOffScreenDSetLayout;
 
-        // ƒtƒH[ƒ}ƒbƒg‚Ìİ’è.
+        // ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆã®è¨­å®š.
         desc.RenderTargetCount  = 1;
         desc.RenderTarget[0]    = a3d::RESOURCE_FORMAT_R8G8B8A8_UNORM;
 
-        // ƒLƒƒƒbƒVƒ…Ï‚İƒpƒCƒvƒ‰ƒCƒ“ƒXƒe[ƒg‚Ìİ’è.
+        // ã‚­ãƒ£ãƒƒã‚·ãƒ¥æ¸ˆã¿ãƒ‘ã‚¤ãƒ—ãƒ©ã‚¤ãƒ³ã‚¹ãƒ†ãƒ¼ãƒˆã®è¨­å®š.
         desc.pCachedPSO = nullptr;
 
-        // ƒOƒ‰ƒtƒBƒbƒNƒXƒpƒCƒvƒ‰ƒCƒ“ƒXƒe[ƒg‚Ì¶¬.
+        // ã‚°ãƒ©ãƒ•ã‚£ãƒƒã‚¯ã‚¹ãƒ‘ã‚¤ãƒ—ãƒ©ã‚¤ãƒ³ã‚¹ãƒ†ãƒ¼ãƒˆã®ç”Ÿæˆ.
         if (!g_pDevice->CreateGraphicsPipeline(&desc, &g_pOffScreenPipeline))
         {
             DisposeShaderBinary(vs);
@@ -683,11 +687,11 @@ bool InitA3D()
         }
     }
 
-    // •s—v‚É‚È‚Á‚½‚Ì‚Å”jŠü‚µ‚Ü‚·.
+    // ä¸è¦ã«ãªã£ãŸã®ã§ç ´æ£„ã—ã¾ã™.
     DisposeShaderBinary(vs);
     DisposeShaderBinary(ps);
 
-    // ƒrƒ…[ƒ|[ƒg‚Ìİ’è.
+    // ãƒ“ãƒ¥ãƒ¼ãƒãƒ¼ãƒˆã®è¨­å®š.
     g_Viewport.X        = 0.0f;
     g_Viewport.Y        = 0.0f;
     g_Viewport.Width    = static_cast<float>(g_pApp->GetWidth());
@@ -695,13 +699,13 @@ bool InitA3D()
     g_Viewport.MinDepth = 0.0f;
     g_Viewport.MaxDepth = 1.0f;
 
-    // ƒVƒU[‹éŒ`‚Ìİ’è.
+    // ã‚·ã‚¶ãƒ¼çŸ©å½¢ã®è¨­å®š.
     g_Scissor.Offset.X      = 0;
     g_Scissor.Offset.Y      = 0;
     g_Scissor.Extent.Width  = g_pApp->GetWidth();
     g_Scissor.Extent.Height = g_pApp->GetHeight();
 
-    // ƒfƒBƒXƒNƒŠƒvƒ^ƒZƒbƒg‚ÌXV.
+    // ãƒ‡ã‚£ã‚¹ã‚¯ãƒªãƒ—ã‚¿ã‚»ãƒƒãƒˆã®æ›´æ–°.
     for(auto i=0; i<2; ++i)
     {
     #if SAMPLE_IS_VULKAN || SAMPLE_IS_D3D12 || SAMPLE_IS_D3D11
@@ -721,11 +725,11 @@ bool InitA3D()
     targetInfo.ColorTargets[0]  = format;
     targetInfo.DepthTarget      = a3d::RESOURCE_FORMAT_D32_FLOAT;
 
-    // GUIƒ}ƒl[ƒWƒƒ‚Ì‰Šú‰».
+    // GUIãƒãƒãƒ¼ã‚¸ãƒ£ã®åˆæœŸåŒ–.
     if (!GuiMgr::GetInstance().Init(g_pDevice, targetInfo, g_pApp))
     { return false; }
 
-    // ƒNƒŠƒAƒJƒ‰[‚Ìİ’è.
+    // ã‚¯ãƒªã‚¢ã‚«ãƒ©ãƒ¼ã®è¨­å®š.
     g_ClearColor[0] = 0.3f;
     g_ClearColor[1] = 0.3f;
     g_ClearColor[2] = 1.0f;
@@ -737,111 +741,111 @@ bool InitA3D()
 }
 
 //-------------------------------------------------------------------------------------------------
-//      A3D‚ÌI—¹ˆ—‚ğs‚¢‚Ü‚·.
+//      A3Dã®çµ‚äº†å‡¦ç†ã‚’è¡Œã„ã¾ã™.
 //-------------------------------------------------------------------------------------------------
 void TermA3D()
 {
     g_Prepare = false;
 
-    // ƒAƒCƒhƒ‹ó‘Ô‚É‚È‚é‚Ü‚Å‘Ò‚Â.
+    // ã‚¢ã‚¤ãƒ‰ãƒ«çŠ¶æ…‹ã«ãªã‚‹ã¾ã§å¾…ã¤.
     g_pGraphicsQueue->WaitIdle();
     g_pDevice->WaitIdle();
 
-    // GUIƒ}ƒl[ƒWƒƒ‚ÌI—¹ˆ—.
+    // GUIãƒãƒãƒ¼ã‚¸ãƒ£ã®çµ‚äº†å‡¦ç†.
     GuiMgr::GetInstance().Term();
 
-    // ƒ_ƒuƒ‹ƒoƒbƒtƒ@ƒŠƒ\[ƒX‚Ì”jŠü.
+    // ãƒ€ãƒ–ãƒ«ãƒãƒƒãƒ•ã‚¡ãƒªã‚½ãƒ¼ã‚¹ã®ç ´æ£„.
     for(auto i=0; i<2; ++i)
     {
-        // ƒRƒ}ƒ“ƒhƒŠƒXƒg‚Ì”jŠü.
+        // ã‚³ãƒãƒ³ãƒ‰ãƒªã‚¹ãƒˆã®ç ´æ£„.
         a3d::SafeRelease(g_pCommandList[i]);
 
-        // ƒJƒ‰[ƒ^[ƒQƒbƒgƒrƒ…[‚Ì”jŠü.
+        // ã‚«ãƒ©ãƒ¼ã‚¿ãƒ¼ã‚²ãƒƒãƒˆãƒ“ãƒ¥ãƒ¼ã®ç ´æ£„.
         a3d::SafeRelease(g_pColorView[i]);
 
-        // ƒJƒ‰[ƒoƒbƒtƒ@‚Ì”jŠü.
+        // ã‚«ãƒ©ãƒ¼ãƒãƒƒãƒ•ã‚¡ã®ç ´æ£„.
         a3d::SafeRelease(g_pColorBuffer[i]);
 
-        // ’è”ƒoƒbƒtƒ@ƒrƒ…[‚Ì”jŠü.
+        // å®šæ•°ãƒãƒƒãƒ•ã‚¡ãƒ“ãƒ¥ãƒ¼ã®ç ´æ£„.
         a3d::SafeRelease(g_pConstantView[i]);
 
-        // ”jŠü‘O‚Éƒƒ‚ƒŠƒ}ƒbƒsƒ“ƒO‚ğ‰ğœ.
+        // ç ´æ£„å‰ã«ãƒ¡ãƒ¢ãƒªãƒãƒƒãƒ”ãƒ³ã‚°ã‚’è§£é™¤.
         if (g_pConstantBuffer[i] != nullptr)
         { g_pConstantBuffer[i]->Unmap(); }
 
-        // ’è”ƒoƒbƒtƒ@‚Ì”jŠü.
+        // å®šæ•°ãƒãƒƒãƒ•ã‚¡ã®ç ´æ£„.
         a3d::SafeRelease(g_pConstantBuffer[i]);
 
-        // ƒfƒBƒXƒNƒŠƒvƒ^ƒZƒbƒg‚Ì”jŠü.
+        // ãƒ‡ã‚£ã‚¹ã‚¯ãƒªãƒ—ã‚¿ã‚»ãƒƒãƒˆã®ç ´æ£„.
         a3d::SafeRelease(g_pDescriptorSet[i]);
     }
 
-    // ƒIƒtƒXƒNƒŠ[ƒ“ƒrƒ…[‚ğ”jŠü.
+    // ã‚ªãƒ•ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ãƒ“ãƒ¥ãƒ¼ã‚’ç ´æ£„.
     a3d::SafeRelease(g_pOffScreenTargetView);
 
     a3d::SafeRelease(g_pOffScreenTextureView);
 
-    // ƒIƒtƒXƒNƒŠ[ƒ“ƒoƒbƒtƒ@‚ğ”jŠü.
+    // ã‚ªãƒ•ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ãƒãƒƒãƒ•ã‚¡ã‚’ç ´æ£„.
     a3d::SafeRelease(g_pOffScreenBuffer);
 
-    // ƒTƒ“ƒvƒ‰[‚Ì”jŠü.
+    // ã‚µãƒ³ãƒ—ãƒ©ãƒ¼ã®ç ´æ£„.
     a3d::SafeRelease(g_pSampler);
 
-    // ƒIƒtƒXƒNƒŠ[ƒ“—pƒpƒCƒvƒ‰ƒCƒ“ƒXƒe[ƒg‚ğ”jŠü.
+    // ã‚ªãƒ•ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ç”¨ãƒ‘ã‚¤ãƒ—ãƒ©ã‚¤ãƒ³ã‚¹ãƒ†ãƒ¼ãƒˆã‚’ç ´æ£„.
     a3d::SafeRelease(g_pOffScreenPipeline);
 
-    // ƒIƒtƒXƒNƒŠ[ƒ“—pƒfƒBƒXƒNƒŠƒvƒ^ƒZƒbƒg‚ğ”jŠü.
+    // ã‚ªãƒ•ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ç”¨ãƒ‡ã‚£ã‚¹ã‚¯ãƒªãƒ—ã‚¿ã‚»ãƒƒãƒˆã‚’ç ´æ£„.
     a3d::SafeRelease(g_pOffScreenDSetLayout);
 
-    // ’¸“_ƒoƒbƒtƒ@‚ğ”jŠü.
+    // é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã‚’ç ´æ£„.
     a3d::SafeRelease(g_pTriangleVertexBuffer);
 
-    // ƒpƒCƒvƒ‰ƒCƒ“ƒXƒe[ƒg‚Ì”jŠü.
+    // ãƒ‘ã‚¤ãƒ—ãƒ©ã‚¤ãƒ³ã‚¹ãƒ†ãƒ¼ãƒˆã®ç ´æ£„.
     a3d::SafeRelease(g_pPipelineState);
 
-    // ’¸“_ƒoƒbƒtƒ@‚Ì”jŠü.
+    // é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã®ç ´æ£„.
     a3d::SafeRelease(g_pVertexBuffer);
 
-    // ƒCƒ“ƒfƒbƒNƒXƒoƒbƒtƒ@‚Ì”jŠü.
+    // ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ãƒãƒƒãƒ•ã‚¡ã®ç ´æ£„.
     a3d::SafeRelease(g_pIndexBuffer);
 
-    // ƒfƒBƒXƒNƒŠƒvƒ^ƒZƒbƒgƒŒƒCƒAƒEƒg‚Ì”jŠü.
+    // ãƒ‡ã‚£ã‚¹ã‚¯ãƒªãƒ—ã‚¿ã‚»ãƒƒãƒˆãƒ¬ã‚¤ã‚¢ã‚¦ãƒˆã®ç ´æ£„.
     a3d::SafeRelease(g_pDescriptorSetLayout);
 
-    // ƒtƒFƒ“ƒX‚Ì”jŠü.
+    // ãƒ•ã‚§ãƒ³ã‚¹ã®ç ´æ£„.
     a3d::SafeRelease(g_pFence);
 
-    // [“xƒXƒeƒ“ƒVƒ‹ƒ^[ƒQƒbƒgƒrƒ…[‚Ì”jŠü.
+    // æ·±åº¦ã‚¹ãƒ†ãƒ³ã‚·ãƒ«ã‚¿ãƒ¼ã‚²ãƒƒãƒˆãƒ“ãƒ¥ãƒ¼ã®ç ´æ£„.
     a3d::SafeRelease(g_pDepthView);
 
-    // [“xƒoƒbƒtƒ@‚Ì”jŠü.
+    // æ·±åº¦ãƒãƒƒãƒ•ã‚¡ã®ç ´æ£„.
     a3d::SafeRelease(g_pDepthBuffer);
 
-    // ƒXƒƒbƒvƒ`ƒFƒCƒ“‚Ì”jŠü.
+    // ã‚¹ãƒ¯ãƒƒãƒ—ãƒã‚§ã‚¤ãƒ³ã®ç ´æ£„.
     a3d::SafeRelease(g_pSwapChain);
 
-    // ƒOƒ‰ƒtƒBƒbƒNƒXƒLƒ…[‚Ì”jŠü.
+    // ã‚°ãƒ©ãƒ•ã‚£ãƒƒã‚¯ã‚¹ã‚­ãƒ¥ãƒ¼ã®ç ´æ£„.
     a3d::SafeRelease(g_pGraphicsQueue);
 
-    // ƒfƒoƒCƒX‚Ì”jŠü.
+    // ãƒ‡ãƒã‚¤ã‚¹ã®ç ´æ£„.
     a3d::SafeRelease(g_pDevice);
 
-    // ƒOƒ‰ƒtƒBƒbƒNƒXƒVƒXƒeƒ€‚ÌI—¹ˆ—.
+    // ã‚°ãƒ©ãƒ•ã‚£ãƒƒã‚¯ã‚¹ã‚·ã‚¹ãƒ†ãƒ ã®çµ‚äº†å‡¦ç†.
     a3d::TermSystem();
 }
 
 //-------------------------------------------------------------------------------------------------
-//      A3D‚É‚æ‚é•`‰æˆ—‚ğs‚¢‚Ü‚·.
+//      A3Dã«ã‚ˆã‚‹æç”»å‡¦ç†ã‚’è¡Œã„ã¾ã™.
 //-------------------------------------------------------------------------------------------------
 void DrawA3D()
 {
     if (!g_Prepare)
     { return; }
 
-    // ƒoƒbƒtƒ@”Ô†‚ğæ“¾‚µ‚Ü‚·.
+    // ãƒãƒƒãƒ•ã‚¡ç•ªå·ã‚’å–å¾—ã—ã¾ã™.
     auto idx = g_pSwapChain->GetCurrentBufferIndex();
 
-    // ’è”ƒoƒbƒtƒ@‚ğXV.
+    // å®šæ•°ãƒãƒƒãƒ•ã‚¡ã‚’æ›´æ–°.
     {
         g_RotateAngle += 0.025f * g_RotateSpeed;
         g_Transform.World = Mat4::RotateY(g_RotateAngle);
@@ -850,17 +854,17 @@ void DrawA3D()
         memcpy(ptr, &g_Transform, sizeof(g_Transform));
     }
 
-    // ƒRƒ}ƒ“ƒh‚Ì‹L˜^‚ğŠJn‚µ‚Ü‚·.
+    // ã‚³ãƒãƒ³ãƒ‰ã®è¨˜éŒ²ã‚’é–‹å§‹ã—ã¾ã™.
     auto pCmd = g_pCommandList[idx];
     pCmd->Begin();
 
-    // ‘‚«‚İ—p‚ÌƒoƒŠƒA‚ğİ’è‚µ‚Ü‚·.
+    // æ›¸ãè¾¼ã¿ç”¨ã®ãƒãƒªã‚¢ã‚’è¨­å®šã—ã¾ã™.
     pCmd->TextureBarrier(
         g_pOffScreenBuffer,
         a3d::RESOURCE_STATE_SHADER_READ,
         a3d::RESOURCE_STATE_COLOR_WRITE);
 
-    // ƒtƒŒ[ƒ€ƒoƒbƒtƒ@‚ğƒNƒŠƒA‚µ‚Ü‚·.
+    // ãƒ•ãƒ¬ãƒ¼ãƒ ãƒãƒƒãƒ•ã‚¡ã‚’ã‚¯ãƒªã‚¢ã—ã¾ã™.
     a3d::ClearColorValue clearColor = {};
     clearColor.R            = g_ClearColor[0];
     clearColor.G            = g_ClearColor[1];
@@ -868,38 +872,38 @@ void DrawA3D()
     clearColor.A            = g_ClearColor[3];
     clearColor.SlotIndex    = 0;
 
-    // ƒIƒtƒXƒNƒŠ[ƒ“ƒtƒŒ[ƒ€ƒoƒbƒtƒ@‚ğİ’è.
+    // ã‚ªãƒ•ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ãƒ•ãƒ¬ãƒ¼ãƒ ãƒãƒƒãƒ•ã‚¡ã‚’è¨­å®š.
     pCmd->BeginFrameBuffer(1, &g_pOffScreenTargetView, nullptr, 1, &clearColor, nullptr);
 
-    // ƒIƒtƒXƒNƒŠ[ƒ“‚Ö‚Ì•`‰æ.
+    // ã‚ªãƒ•ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ã¸ã®æç”».
     {
-        // ƒpƒCƒvƒ‰ƒCƒ“ƒXƒe[ƒg‚ğİ’è‚µ‚Ü‚·.
+        // ãƒ‘ã‚¤ãƒ—ãƒ©ã‚¤ãƒ³ã‚¹ãƒ†ãƒ¼ãƒˆã‚’è¨­å®šã—ã¾ã™.
         pCmd->SetPipelineState(g_pOffScreenPipeline);
 
-        // ƒrƒ…[ƒ|[ƒg‚ÆƒVƒU[‹éŒ`‚ğİ’è‚µ‚Ü‚·.
-        // NOTE : ƒrƒ…[ƒ|[ƒg‚ÆƒVƒU[‹éŒ`‚Ìİ’è‚ÍC•K‚¸SetPipelineState() ‚ÌŒã‚Å‚ ‚é•K—v‚ª‚ ‚è‚Ü‚·.
+        // ãƒ“ãƒ¥ãƒ¼ãƒãƒ¼ãƒˆã¨ã‚·ã‚¶ãƒ¼çŸ©å½¢ã‚’è¨­å®šã—ã¾ã™.
+        // NOTE : ãƒ“ãƒ¥ãƒ¼ãƒãƒ¼ãƒˆã¨ã‚·ã‚¶ãƒ¼çŸ©å½¢ã®è¨­å®šã¯ï¼Œå¿…ãšSetPipelineState() ã®å¾Œã§ã‚ã‚‹å¿…è¦ãŒã‚ã‚Šã¾ã™.
         pCmd->SetViewports(1, &g_Viewport);
         pCmd->SetScissors (1, &g_Scissor);
 
-        // ’¸“_ƒoƒbƒtƒ@‚ğİ’è‚µ‚Ü‚·.
+        // é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã‚’è¨­å®šã—ã¾ã™.
         pCmd->SetVertexBuffers(0, 1, &g_pTriangleVertexBuffer, nullptr);
 
-        // OŠpŒ`‚ğ•`‰æ‚µ‚Ü‚·.
+        // ä¸‰è§’å½¢ã‚’æç”»ã—ã¾ã™.
         pCmd->DrawInstanced(3, 1, 0, 0);
 
     }
 
-    // ƒIƒtƒXƒNƒŠ[ƒ“ƒtƒŒ[ƒ€ƒoƒbƒtƒ@‚ğ‰ğœ‚µ‚Ü‚·(ƒoƒŠƒAİ’è‘O‚É‰ğœ‚µ‚Ä‚¨‚­•K—v‚ª‚ ‚è‚Ü‚·).
+    // ã‚ªãƒ•ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ãƒ•ãƒ¬ãƒ¼ãƒ ãƒãƒƒãƒ•ã‚¡ã‚’è§£é™¤ã—ã¾ã™(ãƒãƒªã‚¢è¨­å®šå‰ã«è§£é™¤ã—ã¦ãŠãå¿…è¦ãŒã‚ã‚Šã¾ã™).
     pCmd->EndFrameBuffer();
 
 
-    // “Ç‚İ‚İ—p‚ÉƒoƒŠƒA‚ğİ’è‚µ‚Ü‚·.
+    // èª­ã¿è¾¼ã¿ç”¨ã«ãƒãƒªã‚¢ã‚’è¨­å®šã—ã¾ã™.
     pCmd->TextureBarrier(
         g_pOffScreenBuffer,
         a3d::RESOURCE_STATE_COLOR_WRITE,
         a3d::RESOURCE_STATE_SHADER_READ);
 
-    // ‘‚«‚İ—p‚ÌƒoƒŠƒA‚ğİ’è‚µ‚Ü‚·.
+    // æ›¸ãè¾¼ã¿ç”¨ã®ãƒãƒªã‚¢ã‚’è¨­å®šã—ã¾ã™.
     pCmd->TextureBarrier(
         g_pColorBuffer[idx],
         a3d::RESOURCE_STATE_PRESENT,
@@ -917,31 +921,31 @@ void DrawA3D()
     clearDepth.EnableClearDepth     = true;
     clearDepth.EnableClearStencil   = false;
 
-    // ƒtƒŒ[ƒ€ƒoƒbƒtƒ@‚ğİ’è‚µ‚Ü‚·.
+    // ãƒ•ãƒ¬ãƒ¼ãƒ ãƒãƒƒãƒ•ã‚¡ã‚’è¨­å®šã—ã¾ã™.
     pCmd->BeginFrameBuffer(1, &g_pColorView[idx], g_pDepthView, 1, &clearColor, &clearDepth);
 
-    // 3D•`‰æ.
+    // 3Dæç”».
     {
-        // ƒpƒCƒvƒ‰ƒCƒ“ƒXƒe[ƒg‚ğİ’è‚µ‚Ü‚·.
+        // ãƒ‘ã‚¤ãƒ—ãƒ©ã‚¤ãƒ³ã‚¹ãƒ†ãƒ¼ãƒˆã‚’è¨­å®šã—ã¾ã™.
         pCmd->SetPipelineState(g_pPipelineState);
 
-        // ƒrƒ…[ƒ|[ƒg‚ÆƒVƒU[‹éŒ`‚ğİ’è‚µ‚Ü‚·.
-        // NOTE : ƒrƒ…[ƒ|[ƒg‚ÆƒVƒU[‹éŒ`‚Ìİ’è‚ÍC•K‚¸SetPipelineState() ‚ÌŒã‚Å‚ ‚é•K—v‚ª‚ ‚è‚Ü‚·.
+        // ãƒ“ãƒ¥ãƒ¼ãƒãƒ¼ãƒˆã¨ã‚·ã‚¶ãƒ¼çŸ©å½¢ã‚’è¨­å®šã—ã¾ã™.
+        // NOTE : ãƒ“ãƒ¥ãƒ¼ãƒãƒ¼ãƒˆã¨ã‚·ã‚¶ãƒ¼çŸ©å½¢ã®è¨­å®šã¯ï¼Œå¿…ãšSetPipelineState() ã®å¾Œã§ã‚ã‚‹å¿…è¦ãŒã‚ã‚Šã¾ã™.
         pCmd->SetViewports(1, &g_Viewport);
         pCmd->SetScissors (1, &g_Scissor);
 
-        // ’¸“_ƒoƒbƒtƒ@‚ğİ’è‚µ‚Ü‚·.
+        // é ‚ç‚¹ãƒãƒƒãƒ•ã‚¡ã‚’è¨­å®šã—ã¾ã™.
         pCmd->SetVertexBuffers(0, 1, &g_pVertexBuffer, nullptr);
         pCmd->SetIndexBuffer(g_pIndexBuffer, 0);
 
-        // ‹éŒ`‚ğ•`‰æ.
+        // çŸ©å½¢ã‚’æç”».
         pCmd->SetDescriptorSet(g_pDescriptorSet[idx]);
         pCmd->DrawIndexedInstanced(6, 1, 0, 0, 0);
     }
 
-    // 2D•`‰æ.
+    // 2Dæç”».
     {
-        // •`‰æŠJn.
+        // æç”»é–‹å§‹.
         GuiMgr::GetInstance().SwapBuffers();
 
         {
@@ -954,48 +958,48 @@ void DrawA3D()
             ImGui::End();
         }
 
-        // •`‰æI—¹.
+        // æç”»çµ‚äº†.
         GuiMgr::GetInstance().Issue(pCmd);
     }
 
-    // •\¦—p‚ÌƒoƒŠƒA‚ğİ’è‚·‚é‘O‚ÉCƒtƒŒ[ƒ€ƒoƒbƒtƒ@‚Ìİ’è‚ğ‰ğœ‚·‚é•K—v‚ª‚ ‚è‚Ü‚·.
+    // è¡¨ç¤ºç”¨ã®ãƒãƒªã‚¢ã‚’è¨­å®šã™ã‚‹å‰ã«ï¼Œãƒ•ãƒ¬ãƒ¼ãƒ ãƒãƒƒãƒ•ã‚¡ã®è¨­å®šã‚’è§£é™¤ã™ã‚‹å¿…è¦ãŒã‚ã‚Šã¾ã™.
     pCmd->EndFrameBuffer();
 
-    // •\¦—p‚ÉƒoƒŠƒA‚ğİ’è‚µ‚Ü‚·.
+    // è¡¨ç¤ºç”¨ã«ãƒãƒªã‚¢ã‚’è¨­å®šã—ã¾ã™.
     pCmd->TextureBarrier(
         g_pColorBuffer[idx],
         a3d::RESOURCE_STATE_COLOR_WRITE,
         a3d::RESOURCE_STATE_PRESENT);
 
-    // ƒRƒ}ƒ“ƒhƒŠƒXƒg‚Ö‚Ì‹L˜^‚ğI—¹‚µ‚Ü‚·.
+    // ã‚³ãƒãƒ³ãƒ‰ãƒªã‚¹ãƒˆã¸ã®è¨˜éŒ²ã‚’çµ‚äº†ã—ã¾ã™.
     pCmd->End();
 
-    // ƒRƒ}ƒ“ƒhƒLƒ…[‚É“o˜^‚µ‚Ü‚·.
+    // ã‚³ãƒãƒ³ãƒ‰ã‚­ãƒ¥ãƒ¼ã«ç™»éŒ²ã—ã¾ã™.
     g_pGraphicsQueue->Submit(pCmd);
 
-    // ƒRƒ}ƒ“ƒh‚ğÀs‚µ‚Ü‚·.
+    // ã‚³ãƒãƒ³ãƒ‰ã‚’å®Ÿè¡Œã—ã¾ã™.
     g_pGraphicsQueue->Execute(g_pFence);
 
-    // ƒRƒ}ƒ“ƒh‚ğÀsŠ®—¹‚ğ‘Ò‹@‚µ‚Ü‚·.
+    // ã‚³ãƒãƒ³ãƒ‰ã‚’å®Ÿè¡Œå®Œäº†ã‚’å¾…æ©Ÿã—ã¾ã™.
     if (!g_pFence->IsSignaled())
     { g_pFence->Wait(UINT32_MAX); }
 
-    // ‰æ–Ê‚É•\¦‚µ‚Ü‚·.
+    // ç”»é¢ã«è¡¨ç¤ºã—ã¾ã™.
     g_pGraphicsQueue->Present( g_pSwapChain );
 }
 
 //-------------------------------------------------------------------------------------------------
-//      ƒŠƒTƒCƒYˆ—‚Å‚·.
+//      ãƒªã‚µã‚¤ã‚ºå‡¦ç†ã§ã™.
 //-------------------------------------------------------------------------------------------------
 void Resize( uint32_t w, uint32_t h, void* pUser )
 {
     A3D_UNUSED( pUser );
 
-    // €”õ‚ªŠ®—¹‚µ‚Ä‚È‚¢ó‘Ô‚¾‚Á‚½‚çCˆ—‚Å‚«‚È‚¢‚Ì‚Å‘¦I—¹.
+    // æº–å‚™ãŒå®Œäº†ã—ã¦ãªã„çŠ¶æ…‹ã ã£ãŸã‚‰ï¼Œå‡¦ç†ã§ããªã„ã®ã§å³çµ‚äº†.
     if (!g_Prepare || g_pSwapChain == nullptr)
     { return; }
 
-    // ƒTƒ“ƒvƒ‹”ˆÈ‰º‚Ìê‡‚ÍƒNƒ‰ƒbƒVƒ…‚·‚éŒ´ˆö‚Æ‚È‚é‚Ì‚Åˆ—‚³‚¹‚È‚¢.
+    // ã‚µãƒ³ãƒ—ãƒ«æ•°ä»¥ä¸‹ã®å ´åˆã¯ã‚¯ãƒ©ãƒƒã‚·ãƒ¥ã™ã‚‹åŸå› ã¨ãªã‚‹ã®ã§å‡¦ç†ã•ã›ãªã„.
     {
         auto desc = g_pSwapChain->GetDesc();
         if ( w < desc.SampleCount || h < desc.SampleCount )
@@ -1004,41 +1008,41 @@ void Resize( uint32_t w, uint32_t h, void* pUser )
 
     g_Prepare = false;
 
-    // ƒAƒCƒhƒ‹ó‘Ô‚É‚È‚é‚Ü‚Å‘Ò‚Â.
+    // ã‚¢ã‚¤ãƒ‰ãƒ«çŠ¶æ…‹ã«ãªã‚‹ã¾ã§å¾…ã¤.
     g_pGraphicsQueue->WaitIdle();
     g_pDevice->WaitIdle();
 
     for(auto i=0; i<2; ++i)
     {
-        // ƒJƒ‰[ƒrƒ…[‚Ì”jŠü.
+        // ã‚«ãƒ©ãƒ¼ãƒ“ãƒ¥ãƒ¼ã®ç ´æ£„.
         a3d::SafeRelease(g_pColorView[i]);
 
-        // ƒJƒ‰[ƒoƒbƒtƒ@‚Ì”jŠü.
+        // ã‚«ãƒ©ãƒ¼ãƒãƒƒãƒ•ã‚¡ã®ç ´æ£„.
         a3d::SafeRelease(g_pColorBuffer[i]);
     }
 
-    // [“xƒXƒeƒ“ƒVƒ‹ƒ^[ƒQƒbƒgƒrƒ…[‚Ì”jŠü.
+    // æ·±åº¦ã‚¹ãƒ†ãƒ³ã‚·ãƒ«ã‚¿ãƒ¼ã‚²ãƒƒãƒˆãƒ“ãƒ¥ãƒ¼ã®ç ´æ£„.
     a3d::SafeRelease(g_pDepthView);
 
-    // [“xƒoƒbƒtƒ@‚Ì”jŠü.
+    // æ·±åº¦ãƒãƒƒãƒ•ã‚¡ã®ç ´æ£„.
     a3d::SafeRelease(g_pDepthBuffer);
 
-    // ƒIƒtƒXƒNƒŠ[ƒ“ƒrƒ…[‚ğ”jŠü.
+    // ã‚ªãƒ•ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ãƒ“ãƒ¥ãƒ¼ã‚’ç ´æ£„.
     a3d::SafeRelease(g_pOffScreenTargetView);
 
     a3d::SafeRelease(g_pOffScreenTextureView);
 
-    // ƒIƒtƒXƒNƒŠ[ƒ“ƒoƒbƒtƒ@‚ğ”jŠü.
+    // ã‚ªãƒ•ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ãƒãƒƒãƒ•ã‚¡ã‚’ç ´æ£„.
     a3d::SafeRelease(g_pOffScreenBuffer);
 
-    // ƒXƒƒbƒvƒ`ƒFƒCƒ“‚ÌƒŠƒTƒCƒYˆ—‚Å‚·.
+    // ã‚¹ãƒ¯ãƒƒãƒ—ãƒã‚§ã‚¤ãƒ³ã®ãƒªã‚µã‚¤ã‚ºå‡¦ç†ã§ã™.
     g_pSwapChain->ResizeBuffers( w, h );
 
-    // ƒeƒNƒXƒ`ƒƒƒrƒ…[‚ğ¶¬.
+    // ãƒ†ã‚¯ã‚¹ãƒãƒ£ãƒ“ãƒ¥ãƒ¼ã‚’ç”Ÿæˆ.
     {
         auto desc = g_pSwapChain->GetDesc();
 
-        // ƒXƒƒbƒvƒ`ƒFƒCƒ“‚©‚çƒoƒbƒtƒ@‚ğæ“¾.
+        // ã‚¹ãƒ¯ãƒƒãƒ—ãƒã‚§ã‚¤ãƒ³ã‹ã‚‰ãƒãƒƒãƒ•ã‚¡ã‚’å–å¾—.
         g_pSwapChain->GetBuffer(0, &g_pColorBuffer[0]);
         g_pSwapChain->GetBuffer(1, &g_pColorBuffer[1]);
 
@@ -1058,7 +1062,7 @@ void Resize( uint32_t w, uint32_t h, void* pUser )
         }
     }
 
-    // [“xƒoƒbƒtƒ@‚Ì¶¬.
+    // æ·±åº¦ãƒãƒƒãƒ•ã‚¡ã®ç”Ÿæˆ.
     {
         a3d::TextureDesc desc = {};
         desc.Dimension          = a3d::RESOURCE_DIMENSION_TEXTURE2D;
@@ -1089,7 +1093,7 @@ void Resize( uint32_t w, uint32_t h, void* pUser )
         assert(ret == true);
     }
 
-    // ƒIƒtƒXƒNƒŠ[ƒ“ƒ^[ƒQƒbƒg‚Ì¶¬.
+    // ã‚ªãƒ•ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ã‚¿ãƒ¼ã‚²ãƒƒãƒˆã®ç”Ÿæˆ.
     {
         a3d::TextureDesc desc = {};
         desc.Dimension          = a3d::RESOURCE_DIMENSION_TEXTURE2D;
@@ -1131,13 +1135,13 @@ void Resize( uint32_t w, uint32_t h, void* pUser )
         assert(ret == true);
     }
 
-    // ƒrƒ…[ƒ|[ƒg‚Ìİ’è.
+    // ãƒ“ãƒ¥ãƒ¼ãƒãƒ¼ãƒˆã®è¨­å®š.
     g_Viewport.X        = 0;
     g_Viewport.Y        = 0;
     g_Viewport.Width    = float(w);
     g_Viewport.Height   = float(h);
 
-    // ƒVƒU[‹éŒ`‚Ìİ’è.
+    // ã‚·ã‚¶ãƒ¼çŸ©å½¢ã®è¨­å®š.
     g_Scissor.Offset.X      = 0;
     g_Scissor.Offset.Y      = 0;
     g_Scissor.Extent.Width  = w;

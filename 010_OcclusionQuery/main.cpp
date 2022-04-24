@@ -309,13 +309,15 @@ bool InitA3D()
     a3d::ShaderBinary vs = {};
     a3d::ShaderBinary ps = {};
     {
-        auto vsFilePath = GetShaderPathForSampleProgram("simpleVS");
-        auto psFilePath = GetShaderPathForSampleProgram("simplePS");
+        FixedSizeString vsPath;
+        FixedSizeString psPath;
+        GetShaderPath("simpleVS", vsPath);
+        GetShaderPath("simplePS", psPath);
 
-        if (!LoadShaderBinary(vsFilePath.c_str(), vs))
+        if (!LoadShaderBinary(vsPath.c_str(), vs))
         { return false; }
 
-        if (!LoadShaderBinary(psFilePath.c_str(), ps))
+        if (!LoadShaderBinary(psPath.c_str(), ps))
         {
             DisposeShaderBinary(vs);
             return false;
@@ -392,11 +394,10 @@ bool InitA3D()
             return false;
         }
     }
-    
+
     // 不要になったので破棄します.
     DisposeShaderBinary(vs);
     DisposeShaderBinary(ps);
-
 
     // ビューポートの設定.
     g_Viewport.X        = 0.0f;

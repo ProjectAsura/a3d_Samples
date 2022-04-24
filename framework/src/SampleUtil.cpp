@@ -13,25 +13,86 @@
 #include <cstring>
 
 
-#if A3D_IS_WIN
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// FixedSizeString class
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
+FixedSizeString::FixedSizeString()
+{ /* DO_NOTHING */ }
+
+FixedSizeString::FixedSizeString(const char* value)
+{ strcpy_s(m_Strings, value); }
+
+const char* FixedSizeString::c_str() const
+{ return m_Strings; }
+
+size_t FixedSizeString::size() const
+{ return strlen(m_Strings); }
+
+FixedSizeString& FixedSizeString::operator = (const FixedSizeString& value)
+{
+    strcpy_s(m_Strings, value.m_Strings);
+    return *this;
+}
+
+FixedSizeString& FixedSizeString::operator = (const char* value)
+{
+    strcpy_s(m_Strings, value);
+    return *this;
+}
+
+FixedSizeString& FixedSizeString::operator += (const FixedSizeString& value)
+{
+    strcat_s(m_Strings, value.m_Strings);
+    return *this;
+}
+
+FixedSizeString& FixedSizeString::operator += (const char* value)
+{
+    strcat_s(m_Strings, value);
+    return *this;
+}
+
+FixedSizeString FixedSizeString::operator + (const FixedSizeString& value)
+{
+    FixedSizeString result;
+    strcat_s(m_Strings, value.m_Strings);
+    return result;
+}
+
+FixedSizeString FixedSizeString::operator + (const char* value)
+{
+    FixedSizeString result;
+    strcat_s(m_Strings, value);
+    return result;
+}
+
+
+#if A3D_IS_WIN
 //-------------------------------------------------------------------------------------------------
 //      サンプルプログラム向けのシェーダディレクトリ名を取得します.
 //-------------------------------------------------------------------------------------------------
-std::string GetShaderPathForSampleProgram(const char* name)
+void GetShaderPath(const char* name, FixedSizeString& result)
 {
-    #if SAMPLE_IS_VULKAN
-        return std::string("../shaders/vulkan_glsl/") + name + ".spv";
-    #elif SAMPLE_IS_D3D12 || SAMPLE_IS_D3D11
-        return std::string("../shaders/hlsl/") + name + ".cso";
-    #endif
+#if SAMPLE_IS_VULKAN
+    result = "../shaders/vulkan_glsl/";
+    result += name;
+    result += ".spv";
+#elif SAMPLE_IS_D3D12 || SAMPLE_IS_D3D11
+    result += "../shaders/hlsl/";
+    result += name;
+    result += ".cso";
+#endif
 }
 
 //-------------------------------------------------------------------------------------------------
 //      サンプルプログラム向けのテクスチャディレクトリ名を取得します.
 //-------------------------------------------------------------------------------------------------
-std::string GetTexturePathForSampleProgram(const char* path)
-{ return std::string("../textures/") + path; }
+void GetTexturePath(const char* name, FixedSizeString& result)
+{
+    result = "../textures/";
+    result += name;
+}
 
 #endif//A3D_IS_WIN
 
