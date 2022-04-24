@@ -4,14 +4,16 @@
 // Copyright(c) Project Asura. All right reserved.
 //-------------------------------------------------------------------------------------------------
 
+#include "spirvHelper.hlsli"
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // VSInput structure
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 struct VSInput
 {
-    float2 Position : POSITION;     //!< 位置座標.
-    float2 TexCoord : TEXCOORD0;    //!< テクスチャ座標.
-    float4 Color    : COLOR0;       //!< カラー.    
+    LOCATION(0) float2 Position : POSITION;     //!< 位置座標.
+    LOCATION(5) float2 TexCoord : TEXCOORD0;    //!< テクスチャ座標.
+    LOCATION(1) float4 Color    : COLOR0;       //!< カラー. 
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -19,15 +21,15 @@ struct VSInput
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 struct VSOutput
 {
-    float4 Position : SV_POSITION;  //!< 位置座標.
-    float4 Color    : COLOR;        //!< カラー.
-    float2 TexCoord : TEXCOORD;     //!< テクスチャ座標.
+    LOCATION(0) float4 Position : SV_POSITION;  //!< 位置座標.
+    LOCATION(1) float4 Color    : COLOR;        //!< カラー.
+    LOCATION(2) float2 TexCoord : TEXCOORD;     //!< テクスチャ座標.
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Transform constant buffer
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-cbuffer Transform : register(b0)
+RESOURCE(cbuffer Transform, b0, 0)
 {
     float4x4 Proj;      //!< 射影行列.
 };
@@ -43,5 +45,6 @@ VSOutput main(VSInput input)
     output.Color    = input.Color;
     output.TexCoord = input.TexCoord;
 
+    FLIP_Y(output.Position);
     return output;
 }

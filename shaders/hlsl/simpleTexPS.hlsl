@@ -4,13 +4,15 @@
 // Copyright(c) Project Asura. All right reserved.
 //-------------------------------------------------------------------------------------------------
 
+#include "spirvHelper.hlsli"
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // VSOutput structure
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 struct VSOutput
 {
-    float4 Position : SV_POSITION;
-    float2 TexCoord : TEXCOORD;
+    LOCATION(0) float4 Position : SV_POSITION;
+    LOCATION(1) float2 TexCoord : TEXCOORD;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -18,14 +20,14 @@ struct VSOutput
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 struct PSOutput
 {
-    float4 Color : SV_TARGET0;
+    LOCATION(0) float4 Color : SV_TARGET0;
 };
 
 //-------------------------------------------------------------------------------------------------
 // Samplers and Textures
 //-------------------------------------------------------------------------------------------------
-SamplerState ColorSmp : register(s0);
-Texture2D    ColorMap : register(t0);
+RESOURCE(SamplerState ColorSmp, s0, 1);
+RESOURCE(Texture2D    ColorMap, t0, 2);
 
 
 //-------------------------------------------------------------------------------------------------

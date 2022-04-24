@@ -299,11 +299,6 @@ bool GuiMgr::Init(a3d::IDevice* pDevice, const TargetViewInfo& info, IApp* pApp)
             m_pDescriptorSet[i]->SetView   (0, m_pCBV[i]);
             m_pDescriptorSet[i]->SetSampler(1, m_pSampler);
             m_pDescriptorSet[i]->SetView   (2, m_pTextureView);
-
-        #if 1
-            // DescriptorSet::Update()‚Ííœ‚³‚ê‚é—\’è‚Å‚·.
-            m_pDescriptorSet[i]->Update();
-        #endif
         }
     #else
         a3d::DescriptorSetLayoutDesc desc = {};

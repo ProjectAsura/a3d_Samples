@@ -371,7 +371,6 @@ bool InitA3D()
             { return false; }
 
             g_pDescriptorSet[i]->SetView(0, g_pConstantView[i]);
-            g_pDescriptorSet[i]->Update();
         }
     }
 

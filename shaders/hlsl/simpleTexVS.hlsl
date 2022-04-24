@@ -4,13 +4,15 @@
 // Copyright(c) Project Asura. All right reserved.
 //-------------------------------------------------------------------------------------------------
 
+#include "spirvHelper.hlsli"
+
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // VSInput structure
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 struct VSInput 
 {
-    float3 Position : POSITION;     // 位置座標です.
-    float2 TexCoord : TEXCOORD;     // テクスチャ座標です.
+    LOCATION(0) float3 Position : POSITION;     // 位置座標です.
+    LOCATION(5) float2 TexCoord : TEXCOORD;     // テクスチャ座標です.
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
@@ -18,18 +20,18 @@ struct VSInput
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 struct VSOutput
 {
-    float4 Position : SV_POSITION;  // 位置座標です.
-    float2 TexCoord : TEXCOORD;     // テクスチャ座標です.
+    LOCATION(0) float4 Position : SV_POSITION;  // 位置座標です.
+    LOCATION(1) float2 TexCoord : TEXCOORD;     // テクスチャ座標です.
 };
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 // Transform buffer
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-cbuffer Transform : register(b0)
+RESOURCE(cbuffer Transform, b0, 0)
 {
-    float4x4 World : packoffset(c0);
-    float4x4 View  : packoffset(c4);
-    float4x4 Proj  : packoffset(c8);
+    float4x4 World;
+    float4x4 View;
+    float4x4 Proj;
 };
 
 //-------------------------------------------------------------------------------------------------
@@ -48,5 +50,6 @@ VSOutput main(const VSInput input)
     output.Position = projPos;
     output.TexCoord = input.TexCoord;
 
+    FLIP_Y(output.Position);
     return output;
 }

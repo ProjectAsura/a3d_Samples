@@ -315,11 +315,6 @@ bool GuiMgr::Init(a3d::IDevice* pDevice, const TargetViewInfo& info, IApp* pApp)
         m_pDescriptorSet->SetSampler(1, m_pSampler);
         m_pDescriptorSet->SetView   (1, m_pTextureView);
     #endif
-
-    #if 1
-        // DescriptorSet::Update()は削除される予定です.
-        m_pDescriptorSet->Update();
-    #endif
     }
 
     // シェーダバイナリを読み込みます.

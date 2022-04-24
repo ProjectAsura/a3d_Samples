@@ -75,11 +75,11 @@ FixedSizeString FixedSizeString::operator + (const char* value)
 void GetShaderPath(const char* name, FixedSizeString& result)
 {
 #if SAMPLE_IS_VULKAN
-    result = "../shaders/vulkan_glsl/";
+    result = "../shaders/hlsl/spirv/";
     result += name;
     result += ".spv";
 #elif SAMPLE_IS_D3D12 || SAMPLE_IS_D3D11
-    result += "../shaders/hlsl/";
+    result += "../shaders/hlsl/dxbc/";
     result += name;
     result += ".cso";
 #endif

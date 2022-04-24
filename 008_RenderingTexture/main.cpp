@@ -717,7 +717,6 @@ bool InitA3D()
         g_pDescriptorSet[i]->SetSampler(1, g_pSampler);
         g_pDescriptorSet[i]->SetView   (1, g_pOffScreenView);
     #endif
-        g_pDescriptorSet[i]->Update();
     }
 
     GuiMgr::TargetViewInfo targetInfo = {};

@@ -598,12 +598,10 @@ bool InitA3D()
         g_pDescriptorSet[i]->SetView   (0, g_pConstantView[i]);
         g_pDescriptorSet[i]->SetSampler(1, g_pSampler);
         g_pDescriptorSet[i]->SetView   (2, g_pTextureView);
-        g_pDescriptorSet[i]->Update();
     #else
         g_pDescriptorSet[i]->SetView   (0, g_pConstantView[i]);
         g_pDescriptorSet[i]->SetSampler(1, g_pSampler);
         g_pDescriptorSet[i]->SetView   (1, g_pTextureView);
-        g_pDescriptorSet[i]->Update();
     #endif
     }
 
