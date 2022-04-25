@@ -45,7 +45,6 @@ GuiMgr::GuiMgr()
 
         m_pCB[i]            = nullptr;
         m_pCBV[i]           = nullptr;
-        m_pDescriptorSet[i] = nullptr;
     }
 }
 
@@ -270,7 +269,6 @@ bool GuiMgr::Init(a3d::IDevice* pDevice, const TargetViewInfo& info, IApp* pApp)
     {
     #if SAMPLE_IS_VULKAN || SAMPLE_IS_D3D12 || SAMPLE_IS_D3D11
         a3d::DescriptorSetLayoutDesc desc = {};
-        desc.MaxSetCount               = 2;
         desc.EntryCount                = 3;
         
         desc.Entries[0].ShaderMask     = a3d::SHADER_MASK_VS;
@@ -290,12 +288,6 @@ bool GuiMgr::Init(a3d::IDevice* pDevice, const TargetViewInfo& info, IApp* pApp)
 
         if (!m_pDevice->CreateDescriptorSetLayout(&desc, &m_pDescriptorSetLayout))
         { return false; }
-
-        for(auto i=0; i<2; ++i)
-        {
-            if (!m_pDescriptorSetLayout->CreateDescriptorSet(&m_pDescriptorSet[i]))
-            { return false; }
-        }
     #else
         a3d::DescriptorSetLayoutDesc desc = {};
         desc.MaxSetCount               = 2;
@@ -313,16 +305,6 @@ bool GuiMgr::Init(a3d::IDevice* pDevice, const TargetViewInfo& info, IApp* pApp)
 
         if (!m_pDevice->CreateDescriptorSetLayout(&desc, &m_pDescriptorSetLayout))
         { return false; }
-
-        for(auto i=0; i<2; ++i)
-        {
-            if (!m_pDescriptorSetLayout->CreateDescriptorSet(&m_pDescriptorSet[i]))
-            { return false; }
-
-            m_pDescriptorSet[i]->SetBuffer (0, m_pCBV[i]);
-            m_pDescriptorSet[i]->SetSampler(1, m_pSampler);
-            m_pDescriptorSet[i]->SetTexture(1, m_pTextureView, a3d::RESOURCE_STATE_SHADER_READ);
-        }
     #endif
     }
 
@@ -574,7 +556,6 @@ void GuiMgr::Term()
         a3d::SafeRelease(m_pIB[i]);
         a3d::SafeRelease(m_pCB[i]);
         a3d::SafeRelease(m_pCBV[i]);
-        a3d::SafeRelease(m_pDescriptorSet[i]);
         m_SizeVB[i] = 0;
         m_SizeIB[i] = 0;
     }
@@ -658,11 +639,17 @@ void GuiMgr::OnDraw(ImDrawData* pData)
     // パイプラインステートとディスクリプタセットを設定.
     {
         m_pCommandList->SetPipelineState(m_pPipelineState);
-        m_pCommandList->SetDescriptorSet(m_pDescriptorSet[m_BufferIndex]);
+        m_pCommandList->SetDescriptorSetLayout(m_pDescriptorSetLayout);
 
+    #if SAMPLE_IS_VULKAN || SAMPLE_IS_D3D12 || SAMPLE_IS_D3D11
         m_pCommandList->SetView   (0, m_pCBV[m_BufferIndex]);
         m_pCommandList->SetSampler(1, m_pSampler);
         m_pCommandList->SetView   (2, m_pTextureView);
+    #else
+        m_pCommandList->SetBuffer (0, m_pCBV[m_BufferIndex]);
+        m_pCommandList->SetSampler(1, m_pSampler);
+        m_pCommandList->SetTexture(1, m_pTextureView, a3d::RESOURCE_STATE_SHADER_READ);
+    #endif
     }
 
     // 頂点バッファとインデックスバッファを設定.

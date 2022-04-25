@@ -73,7 +73,6 @@ a3d::IRenderTargetView*     g_pColorView[2]         = {};       //!< ƒJƒ‰[ƒrƒ…
 a3d::ICommandList*          g_pCommandList[2]       = {};       //!< ƒRƒ}ƒ“ƒhƒŠƒXƒg‚Å‚·.
 a3d::IBuffer*               g_pConstantBuffer[2]    = {};       //!< ’è”ƒoƒbƒtƒ@‚Å‚·.
 a3d::IConstantBufferView*   g_pConstantView[2]      = {};       //!< ’è”ƒoƒbƒtƒ@ƒrƒ…[‚Å‚·.
-a3d::IDescriptorSet*        g_pDescriptorSet[2]     = {};       //!< ƒfƒBƒXƒNƒŠƒvƒ^ƒZƒbƒg‚Å‚·.
 a3d::Viewport               g_Viewport              = {};       //!< ƒrƒ…[ƒ|[ƒg‚Å‚·.
 a3d::Rect                   g_Scissor               = {};       //!< ƒVƒU[‹éŒ`‚Å‚·.
 Transform                   g_Transform             = {};       //!< •ÏŠ·s—ñ‚Å‚·.
@@ -365,7 +364,6 @@ bool InitA3D()
     {
     #if SAMPLE_IS_VULKAN || SAMPLE_IS_D3D12 || SAMPLE_IS_D3D11
         a3d::DescriptorSetLayoutDesc desc = {};
-        desc.MaxSetCount               = 2;
         desc.EntryCount                = 3;
 
         desc.Entries[0].ShaderMask     = a3d::SHADER_MASK_VS;
@@ -400,12 +398,6 @@ bool InitA3D()
 
         if (!g_pDevice->CreateDescriptorSetLayout(&desc, &g_pDescriptorSetLayout))
         { return false; }
-
-        for(auto i=0; i<2; ++i)
-        {
-            if (!g_pDescriptorSetLayout->CreateDescriptorSet(&g_pDescriptorSet[i]))
-            { return false; }
-        }
     }
 
     // ƒOƒ‰ƒtƒBƒbƒNƒXƒpƒCƒvƒ‰ƒCƒ“ƒXƒe[ƒg‚ğ¶¬‚µ‚Ü‚·.
@@ -585,12 +577,6 @@ bool InitA3D()
     g_Scissor.Extent.Width  = g_pApp->GetWidth();
     g_Scissor.Extent.Height = g_pApp->GetHeight();
 
-    // ƒfƒBƒXƒNƒŠƒvƒ^ƒZƒbƒg‚ÌXV.
-    for(auto i=0; i<2; ++i)
-    {
-
-    }
-
     GuiMgr::TargetViewInfo targetInfo = {};
     targetInfo.ColorCount       = 1;
     targetInfo.ColorTargets[0]  = format;
@@ -646,9 +632,6 @@ void TermA3D()
 
         // ’è”ƒoƒbƒtƒ@‚Ì”jŠü.
         a3d::SafeRelease(g_pConstantBuffer[i]);
-
-        // ƒfƒBƒXƒNƒŠƒvƒ^ƒZƒbƒg‚Ì”jŠü.
-        a3d::SafeRelease(g_pDescriptorSet[i]);
     }
 
     // ƒTƒ“ƒvƒ‰[‚Ì”jŠü.
@@ -755,7 +738,7 @@ void DrawA3D()
         pCmd->SetIndexBuffer(g_pIndexBuffer, 0);
 
         // ‹éŒ`‚ğ•`‰æ.
-        pCmd->SetDescriptorSet(g_pDescriptorSet[idx]);
+        pCmd->SetDescriptorSetLayout(g_pDescriptorSetLayout);
 
     #if SAMPLE_IS_VULKAN || SAMPLE_IS_D3D12 || SAMPLE_IS_D3D11
         pCmd->SetView   (0, g_pConstantView[idx]);

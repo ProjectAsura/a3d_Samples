@@ -89,7 +89,6 @@ private:
     a3d::ITexture*              m_pTexture;             //!< テクスチャです.
     a3d::IShaderResourceView*   m_pTextureView;         //!< テクスチャビューです.
     a3d::IDescriptorSetLayout*  m_pDescriptorSetLayout; //!< ディスクリプタレイアウトです.
-    a3d::IDescriptorSet*        m_pDescriptorSet[2];    //!< ディスクリプタセットです.
     a3d::IPipelineState*        m_pPipelineState;       //!< パイプラインステートです.
     a3d::ICommandList*          m_pCommandList;         //!< コマンドリストです.
     Mat4*                       m_pProjection[2];       //!< 射影行列です.

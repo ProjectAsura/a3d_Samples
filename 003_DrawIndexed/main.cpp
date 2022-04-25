@@ -265,7 +265,6 @@ bool InitA3D()
     {
         a3d::DescriptorSetLayoutDesc desc = {};
         desc.EntryCount  = 0;
-        desc.MaxSetCount = 0;
 
         if (!g_pDevice->CreateDescriptorSetLayout(&desc, &g_pDescriptorSetLayout))
         { return false; }

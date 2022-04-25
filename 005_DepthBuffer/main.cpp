@@ -67,7 +67,6 @@ a3d::IBuffer*               g_pConstantBuffer[2]    = {};       //!< ’è”ƒoƒbƒtƒ
 a3d::IConstantBufferView*   g_pConstantView[4]      = {};       //!< ’è”ƒoƒbƒtƒ@ƒrƒ…[‚Å‚·.
 a3d::Viewport               g_Viewport              = {};       //!< ƒrƒ…[ƒ|[ƒg‚Å‚·.
 a3d::Rect                   g_Scissor               = {};       //!< ƒVƒU[‹éŒ`‚Å‚·.
-a3d::IDescriptorSet*        g_pDescriptorSet[4]     = {};       //!< ƒfƒBƒXƒNƒŠƒvƒ^ƒZƒbƒg‚Å‚·.
 Transform                   g_Transform             = {};       //!< •ÏŠ·s—ñ‚Å‚·.
 float                       g_RotateAngle           = 0.0f;     //!< ‰ñ“]Šp‚Å‚·.
 void*                       g_pCbHead[2]            = {};       //!< ’è”ƒoƒbƒtƒ@‚Ìæ“ªƒ|ƒCƒ“ƒ^‚Å‚·.
@@ -356,7 +355,6 @@ bool InitA3D()
     // ƒfƒBƒXƒNƒŠƒvƒ^ƒZƒbƒgƒŒƒCƒAƒEƒg‚ð¶¬‚µ‚Ü‚·.
     {
         a3d::DescriptorSetLayoutDesc desc = {};
-        desc.MaxSetCount               = 4;
         desc.EntryCount                = 1;
         desc.Entries[0].ShaderMask     = a3d::SHADER_MASK_VS;
         desc.Entries[0].ShaderRegister = 0;
@@ -364,12 +362,6 @@ bool InitA3D()
 
         if (!g_pDevice->CreateDescriptorSetLayout(&desc, &g_pDescriptorSetLayout))
         { return false; }
-
-        for(auto i=0; i<4; ++i)
-        {
-            if (!g_pDescriptorSetLayout->CreateDescriptorSet(&g_pDescriptorSet[i]))
-            { return false; }
-        }
     }
 
     // ƒOƒ‰ƒtƒBƒbƒNƒXƒpƒCƒvƒ‰ƒCƒ“ƒXƒe[ƒg‚ð¶¬‚µ‚Ü‚·.
@@ -471,9 +463,6 @@ void TermA3D()
     {
         // ’è”ƒoƒbƒtƒ@ƒrƒ…[‚Ì”jŠü.
         a3d::SafeRelease(g_pConstantView[i]);
-
-        // ƒfƒBƒXƒNƒŠƒvƒ^ƒZƒbƒg‚Ì”jŠü.
-        a3d::SafeRelease(g_pDescriptorSet[i]);
     }
 
     // ƒpƒCƒvƒ‰ƒCƒ“ƒXƒe[ƒg‚Ì”jŠü.
@@ -580,12 +569,12 @@ void DrawA3D()
         pCmd->SetIndexBuffer(g_pIndexBuffer, 0);
 
         // Žè‘O‚ÌŽOŠpŒ`.
-        pCmd->SetDescriptorSet(g_pDescriptorSet[idx * 2 + 0]);
+        pCmd->SetDescriptorSetLayout(g_pDescriptorSetLayout);
         pCmd->SetView(0, g_pConstantView[idx * 2 + 0]);
         pCmd->DrawIndexedInstanced(6, 1, 0, 0, 0);
 
         // ‰œ‘¤‚ÌŽOŠpŒ`.
-        pCmd->SetDescriptorSet(g_pDescriptorSet[idx * 2 + 1]);
+        pCmd->SetDescriptorSetLayout(g_pDescriptorSetLayout);
         pCmd->SetView(0, g_pConstantView[idx * 2 + 1]);
         pCmd->DrawIndexedInstanced(6, 1, 0, 0, 0);
     }

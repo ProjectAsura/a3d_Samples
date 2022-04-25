@@ -85,7 +85,6 @@ a3d::IRenderTargetView*     g_pColorView[2]         = {};       //!< カラー�
 a3d::ICommandList*          g_pCommandList[2]       = {};       //!< コマンドリストです.
 a3d::IBuffer*               g_pConstantBuffer[2]    = {};       //!< 定数バッファです.
 a3d::IConstantBufferView*   g_pConstantView[2]      = {};       //!< 定数バッファビューです.
-a3d::IDescriptorSet*        g_pDescriptorSet[2]     = {};       //!< ディスクリプタセットです.
 a3d::Viewport               g_Viewport              = {};       //!< ビューポートです.
 a3d::Rect                   g_Scissor               = {};       //!< シザー矩形です.
 Transform                   g_Transform             = {};       //!< 変換行列です.
@@ -374,7 +373,6 @@ bool InitA3D()
     {
     #if SAMPLE_IS_VULKAN || SAMPLE_IS_D3D12 || SAMPLE_IS_D3D11
         a3d::DescriptorSetLayoutDesc desc = {};
-        desc.MaxSetCount               = 2;
         desc.EntryCount                = 3;
 
         desc.Entries[0].ShaderMask     = a3d::SHADER_MASK_VS;
@@ -409,12 +407,6 @@ bool InitA3D()
 
         if (!g_pDevice->CreateDescriptorSetLayout(&desc, &g_pDescriptorSetLayout))
         { return false; }
-
-        for(auto i=0; i<2; ++i)
-        {
-            if (!g_pDescriptorSetLayout->CreateDescriptorSet(&g_pDescriptorSet[i]))
-            { return false; }
-        }
     }
 
     // グラフィックスパイプラインステートを生成します.
@@ -622,7 +614,6 @@ bool InitA3D()
     {
         a3d::DescriptorSetLayoutDesc desc = {};
         desc.EntryCount  = 0;
-        desc.MaxSetCount = 0;
 
         if (!g_pDevice->CreateDescriptorSetLayout(&desc, &g_pOffScreenDSetLayout))
         { return false; }
@@ -760,9 +751,6 @@ void TermA3D()
 
         // 定数バッファの破棄.
         a3d::SafeRelease(g_pConstantBuffer[i]);
-
-        // ディスクリプタセットの破棄.
-        a3d::SafeRelease(g_pDescriptorSet[i]);
     }
 
     // オフスクリーンビューを破棄.
@@ -924,7 +912,7 @@ void DrawA3D()
         pCmd->SetIndexBuffer(g_pIndexBuffer, 0);
 
         // 矩形を描画.
-        pCmd->SetDescriptorSet(g_pDescriptorSet[idx]);
+        pCmd->SetDescriptorSetLayout(g_pDescriptorSetLayout);
 
     #if SAMPLE_IS_VULKAN || SAMPLE_IS_D3D12 || SAMPLE_IS_D3D11
         pCmd->SetView   (0, g_pConstantView[idx]);

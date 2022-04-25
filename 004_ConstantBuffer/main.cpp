@@ -64,7 +64,6 @@ a3d::IRenderTargetView*     g_pRenderTargetView[2]  = {};       //!< ƒŒƒ“ƒ_[ƒ^
 a3d::ICommandList*          g_pCommandList[2]       = {};       //!< ƒRƒ}ƒ“ƒhƒŠƒXƒg‚Å‚·.
 a3d::IBuffer*               g_pConstantBuffer[2]    = {};       //!< ’è”ƒoƒbƒtƒ@‚Å‚·.
 a3d::IConstantBufferView*   g_pConstantView[2]      = {};       //!< ’è”ƒoƒbƒtƒ@ƒrƒ…[‚Å‚·.
-a3d::IDescriptorSet*        g_pDescriptorSet[2]     = {};       //!< ƒfƒBƒXƒNƒŠƒvƒ^ƒZƒbƒg‚Å‚·.
 a3d::Viewport               g_Viewport              = {};       //!< ƒrƒ…[ƒ|[ƒg‚Å‚·.
 a3d::Rect                   g_Scissor               = {};       //!< ƒVƒU[‹éŒ`‚Å‚·.
 Transform                   g_Transform             = {};       //!< •ÏŠ·s—ñ‚Å‚·.
@@ -319,7 +318,6 @@ bool InitA3D()
     // ƒfƒBƒXƒNƒŠƒvƒ^ƒZƒbƒgƒŒƒCƒAƒEƒg‚ð¶¬‚µ‚Ü‚·.
     {
         a3d::DescriptorSetLayoutDesc desc = {};
-        desc.MaxSetCount               = 2;
         desc.EntryCount                = 1;
         desc.Entries[0].ShaderMask     = a3d::SHADER_MASK_VS;
         desc.Entries[0].ShaderRegister = 0;
@@ -327,12 +325,6 @@ bool InitA3D()
 
         if (!g_pDevice->CreateDescriptorSetLayout(&desc, &g_pDescriptorSetLayout))
         { return false; }
-
-        for(auto i=0; i<2; ++i)
-        {
-            if (!g_pDescriptorSetLayout->CreateDescriptorSet(&g_pDescriptorSet[i]))
-            { return false; }
-        }
     }
 
     // ƒOƒ‰ƒtƒBƒbƒNƒXƒpƒCƒvƒ‰ƒCƒ“ƒXƒe[ƒg‚ð¶¬‚µ‚Ü‚·.
@@ -430,9 +422,6 @@ void TermA3D()
 
         // ’è”ƒoƒbƒtƒ@‚Ì”jŠü.
         a3d::SafeRelease(g_pConstantBuffer[i]);
-
-        // ƒfƒBƒXƒNƒŠƒvƒ^ƒZƒbƒg‚Ì”jŠü.
-        a3d::SafeRelease(g_pDescriptorSet[i]);
     }
 
     // ƒpƒCƒvƒ‰ƒCƒ“ƒXƒe[ƒg‚Ì”jŠü.
@@ -511,8 +500,8 @@ void DrawA3D()
         // ƒpƒCƒvƒ‰ƒCƒ“ƒXƒe[ƒg‚ðÝ’è‚µ‚Ü‚·.
         pCmd->SetPipelineState(g_pPipelineState);
 
-        // ƒfƒBƒXƒNƒŠƒvƒ^ƒZƒbƒg‚ðÝ’è‚µ‚Ü‚·.
-        pCmd->SetDescriptorSet(g_pDescriptorSet[idx]);
+        // ƒfƒBƒXƒNƒŠƒvƒ^ƒZƒbƒgƒŒƒCƒAƒEƒg‚ðÝ’è‚µ‚Ü‚·.
+        pCmd->SetDescriptorSetLayout(g_pDescriptorSetLayout);
 
         // ’è”ƒoƒbƒtƒ@‚ðÝ’è‚µ‚Ü‚·.
         pCmd->SetView(0, g_pConstantView[idx]);

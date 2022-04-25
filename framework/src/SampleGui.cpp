@@ -35,7 +35,6 @@ GuiMgr::GuiMgr()
 , m_pTexture            (nullptr)
 , m_pTextureView        (nullptr)
 , m_pDescriptorSetLayout(nullptr)
-, m_pDescriptorSet      (nullptr)
 , m_pPipelineState      (nullptr)
 , m_pCommandList        (nullptr)
 , m_BufferIndex         (0)
@@ -267,7 +266,6 @@ bool GuiMgr::Init(a3d::IDevice* pDevice, const TargetViewInfo& info, IApp* pApp)
     {
     #if SAMPLE_IS_VULKAN || SAMPLE_IS_D3D12 || SAMPLE_IS_D3D11
         a3d::DescriptorSetLayoutDesc desc = {};
-        desc.MaxSetCount               = 2;
         desc.EntryCount                = 3;
         
         desc.Entries[0].ShaderMask     = a3d::SHADER_MASK_VS;
@@ -301,9 +299,6 @@ bool GuiMgr::Init(a3d::IDevice* pDevice, const TargetViewInfo& info, IApp* pApp)
     #endif
 
         if (!m_pDevice->CreateDescriptorSetLayout(&desc, &m_pDescriptorSetLayout))
-        { return false; }
-
-        if (!m_pDescriptorSetLayout->CreateDescriptorSet(&m_pDescriptorSet))
         { return false; }
     }
 
@@ -562,7 +557,6 @@ void GuiMgr::Term()
     a3d::SafeRelease(m_pSampler);
     a3d::SafeRelease(m_pTextureView);
     a3d::SafeRelease(m_pTexture);
-    a3d::SafeRelease(m_pDescriptorSet);
     a3d::SafeRelease(m_pDescriptorSetLayout);
     a3d::SafeRelease(m_pPipelineState);
     m_pCommandList = nullptr;
@@ -644,7 +638,7 @@ void GuiMgr::OnDraw()
     // パイプラインステートとディスクリプタセット・ディスクリプタセットレイアウトを設定.
     {
         m_pCommandList->SetPipelineState(m_pPipelineState);
-        m_pCommandList->SetDescriptorSet(m_pDescriptorSet);
+        m_pCommandList->SetDescriptorSetLayout(m_pDescriptorSetLayout);
 
     #if SAMPLE_IS_VULKAN || SAMPLE_IS_D3D12 || SAMPLE_IS_D3D11
         m_pCommandList->SetView   (0, m_pConstantView);
