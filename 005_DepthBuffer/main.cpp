@@ -369,8 +369,6 @@ bool InitA3D()
         {
             if (!g_pDescriptorSetLayout->CreateDescriptorSet(&g_pDescriptorSet[i]))
             { return false; }
-
-            g_pDescriptorSet[i]->SetView(0, g_pConstantView[i]);
         }
     }
 
@@ -583,10 +581,12 @@ void DrawA3D()
 
         // 手前の三角形.
         pCmd->SetDescriptorSet(g_pDescriptorSet[idx * 2 + 0]);
+        pCmd->SetView(0, g_pConstantView[idx * 2 + 0]);
         pCmd->DrawIndexedInstanced(6, 1, 0, 0, 0);
 
         // 奥側の三角形.
         pCmd->SetDescriptorSet(g_pDescriptorSet[idx * 2 + 1]);
+        pCmd->SetView(0, g_pConstantView[idx * 2 + 1]);
         pCmd->DrawIndexedInstanced(6, 1, 0, 0, 0);
     }
     

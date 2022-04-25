@@ -340,8 +340,6 @@ bool InitA3D()
         {
             if (!g_pDescriptorSetLayout->CreateDescriptorSet(&g_pDescriptorSet[i]))
             { return false; }
-
-            g_pDescriptorSet[i]->SetView(0, g_pConstantView[i]);
         }
     }
 
@@ -589,6 +587,8 @@ void DrawA3D()
         // 頂点バッファを設定します.
         pCmd->SetVertexBuffers(0, 1, &g_pVertexBuffer, nullptr);
         pCmd->SetIndexBuffer(g_pIndexBuffer, 0);
+
+        pCmd->SetView(0, g_pConstantView[idx]);
 
         // 三角形を描画します.
         pCmd->DrawIndexedInstanced(6, 1, 0, 0, 0);

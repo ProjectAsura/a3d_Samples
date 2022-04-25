@@ -295,10 +295,6 @@ bool GuiMgr::Init(a3d::IDevice* pDevice, const TargetViewInfo& info, IApp* pApp)
         {
             if (!m_pDescriptorSetLayout->CreateDescriptorSet(&m_pDescriptorSet[i]))
             { return false; }
-
-            m_pDescriptorSet[i]->SetView   (0, m_pCBV[i]);
-            m_pDescriptorSet[i]->SetSampler(1, m_pSampler);
-            m_pDescriptorSet[i]->SetView   (2, m_pTextureView);
         }
     #else
         a3d::DescriptorSetLayoutDesc desc = {};
@@ -663,6 +659,10 @@ void GuiMgr::OnDraw(ImDrawData* pData)
     {
         m_pCommandList->SetPipelineState(m_pPipelineState);
         m_pCommandList->SetDescriptorSet(m_pDescriptorSet[m_BufferIndex]);
+
+        m_pCommandList->SetView   (0, m_pCBV[m_BufferIndex]);
+        m_pCommandList->SetSampler(1, m_pSampler);
+        m_pCommandList->SetView   (2, m_pTextureView);
     }
 
     // 頂点バッファとインデックスバッファを設定.

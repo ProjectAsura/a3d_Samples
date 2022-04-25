@@ -332,8 +332,6 @@ bool InitA3D()
         {
             if (!g_pDescriptorSetLayout->CreateDescriptorSet(&g_pDescriptorSet[i]))
             { return false; }
-
-            g_pDescriptorSet[i]->SetView(0, g_pConstantView[i]);
         }
     }
 
@@ -515,6 +513,9 @@ void DrawA3D()
 
         // ディスクリプタセットを設定します.
         pCmd->SetDescriptorSet(g_pDescriptorSet[idx]);
+
+        // 定数バッファを設定します.
+        pCmd->SetView(0, g_pConstantView[idx]);
 
         // ビューポートとシザー矩形を設定します.
         // NOTE : ビューポートとシザー矩形の設定は，必ずSetPipelineState() の後である必要があります.

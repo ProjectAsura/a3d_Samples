@@ -305,16 +305,6 @@ bool GuiMgr::Init(a3d::IDevice* pDevice, const TargetViewInfo& info, IApp* pApp)
 
         if (!m_pDescriptorSetLayout->CreateDescriptorSet(&m_pDescriptorSet))
         { return false; }
-
-    #if SAMPLE_IS_VULKAN || SAMPLE_IS_D3D12 || SAMPLE_IS_D3D11
-        m_pDescriptorSet->SetView   (0, m_pConstantView);
-        m_pDescriptorSet->SetSampler(1, m_pSampler);
-        m_pDescriptorSet->SetView   (2, m_pTextureView);
-    #else
-        m_pDescriptorSet->SetView   (0, m_pConstantView);
-        m_pDescriptorSet->SetSampler(1, m_pSampler);
-        m_pDescriptorSet->SetView   (1, m_pTextureView);
-    #endif
     }
 
     // シェーダバイナリを読み込みます.
@@ -655,6 +645,16 @@ void GuiMgr::OnDraw()
     {
         m_pCommandList->SetPipelineState(m_pPipelineState);
         m_pCommandList->SetDescriptorSet(m_pDescriptorSet);
+
+    #if SAMPLE_IS_VULKAN || SAMPLE_IS_D3D12 || SAMPLE_IS_D3D11
+        m_pCommandList->SetView   (0, m_pConstantView);
+        m_pCommandList->SetSampler(1, m_pSampler);
+        m_pCommandList->SetView   (2, m_pTextureView);
+    #else
+        m_pCommandList->SetView   (0, m_pConstantView);
+        m_pCommandList->SetSampler(1, m_pSampler);
+        m_pCommandList->SetView   (1, m_pTextureView);
+    #endif
     }
 
     // 頂点バッファとインデックスバッファを設定.

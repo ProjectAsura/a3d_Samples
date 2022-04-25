@@ -594,15 +594,7 @@ bool InitA3D()
     // ディスクリプタセットの更新.
     for(auto i=0; i<2; ++i)
     {
-    #if SAMPLE_IS_VULKAN || SAMPLE_IS_D3D12 || SAMPLE_IS_D3D11
-        g_pDescriptorSet[i]->SetView   (0, g_pConstantView[i]);
-        g_pDescriptorSet[i]->SetSampler(1, g_pSampler);
-        g_pDescriptorSet[i]->SetView   (2, g_pTextureView);
-    #else
-        g_pDescriptorSet[i]->SetView   (0, g_pConstantView[i]);
-        g_pDescriptorSet[i]->SetSampler(1, g_pSampler);
-        g_pDescriptorSet[i]->SetView   (1, g_pTextureView);
-    #endif
+
     }
 
     GuiMgr::TargetViewInfo targetInfo = {};
@@ -774,6 +766,16 @@ void DrawA3D()
 
         // 矩形を描画.
         pCmd->SetDescriptorSet(g_pDescriptorSet[idx]);
+
+    #if SAMPLE_IS_VULKAN || SAMPLE_IS_D3D12 || SAMPLE_IS_D3D11
+        pCmd->SetView   (0, g_pConstantView[idx]);
+        pCmd->SetSampler(1, g_pSampler);
+        pCmd->SetView   (2, g_pTextureView);
+    #else
+        pCmd->SetView   (0, g_pConstantView[i]);
+        pCmd->SetSampler(1, g_pSampler);
+        pCmd->SetView   (1, g_pTextureView);
+    #endif
         pCmd->DrawIndexedInstanced(6, 1, 0, 0, 0);
     }
 
