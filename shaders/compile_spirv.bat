@@ -1,5 +1,6 @@
 setlocal
 set SHADER_COMPILER="%VK_SDK_PATH%/Bin/dxc.exe"
+set DISASSEMBLER="%VK_SDK_PATH%/Bin/spirv-cross.exe"
 
 mkdir spirv
 
@@ -15,4 +16,5 @@ mkdir spirv
 %SHADER_COMPILER% -I "../asura-SDK/a3d/res/shader" -spirv -E main -T vs_4_0 -Fo "spirv/imguiVS.spv" imguiVS.hlsl
 %SHADER_COMPILER% -I "../asura-SDK/a3d/res/shader" -spirv -E main -T ps_4_0 -Fo "spirv/imguiPS.spv" imguiPS.hlsl
 
+%SHADER_COMPILER% -I "../asura-SDK/a3d/res/shader" -spirv -E main -T cs_5_0 -Fo "spirv/colorFilterCS.spv" colorFilterCS.hlsl
 endlocal

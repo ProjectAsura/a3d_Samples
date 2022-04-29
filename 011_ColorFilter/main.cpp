@@ -50,6 +50,18 @@ struct Transform
     Mat4 Proj;      //!< 射影行列です.
 };
 
+///////////////////////////////////////////////////////////////////////////////////////////////////
+// ColorFilter structure
+///////////////////////////////////////////////////////////////////////////////////////////////////
+struct ColorFilter
+{
+    float       TargetWidth;        //!< ターゲットの横幅.
+    float       TargetHeight;       //!< ターゲットの縦幅.
+    uint32_t    Reserved0;          //!< 予約領域.
+    uint32_t    Reserved1;          //!< 予約領域.
+    Mat4        ColorMatrix;        //!< カラー行列.
+};
+
 
 //-------------------------------------------------------------------------------------------------
 // Forward declarations.
@@ -58,6 +70,7 @@ bool InitA3D();
 void TermA3D();
 void DrawA3D();
 void Resize(uint32_t w, uint32_t h, void* ptr);
+Mat4 CreateSepiaMatrix(float tone);
 
 //-------------------------------------------------------------------------------------------------
 // Global Varaibles.
@@ -87,12 +100,21 @@ a3d::IBuffer*               g_pConstantBuffer[2]    = {};       //!< 定数バ�
 a3d::IConstantBufferView*   g_pConstantView[2]      = {};       //!< 定数バッファビューです.
 a3d::Viewport               g_Viewport              = {};       //!< ビューポートです.
 a3d::Rect                   g_Scissor               = {};       //!< シザー矩形です.
+a3d::IPipelineState*        g_pColorFilterPipeline  = nullptr;
+a3d::IDescriptorSetLayout*  g_pColorFilterLayout    = nullptr;
+a3d::ITexture*              g_pFilteredTexture      = nullptr;
+a3d::IUnorderedAccessView*  g_pFilteredUAV          = nullptr;
+a3d::IShaderResourceView*   g_pFilteredSRV          = nullptr;
+a3d::IBuffer*               g_pColorFilterBuffer[2] = {};
+a3d::IConstantBufferView*   g_pColorFilterCBV[2]    = {};
 Transform                   g_Transform             = {};       //!< 変換行列です.
 float                       g_RotateAngle           = 0.0f;     //!< 回転角です.
 void*                       g_pCbHead[2]            = {};       //!< 定数バッファの先頭ポインタです.
 float                       g_ClearColor[4]         = {};       //!< クリアカラーです.
 float                       g_RotateSpeed           = 1.0f;     //!< 回転速度です.
 bool                        g_Prepare               = false;    //!< 準備が出来たらtrue.
+float                       g_SepiaTone             = 0.0f;
+void*                       g_pCbFilter[2]          = {};
 SampleAllocator             g_Allocator;                        //!< アロケータ.
 
 //-------------------------------------------------------------------------------------------------
@@ -682,6 +704,123 @@ bool InitA3D()
     DisposeShaderBinary(vs);
     DisposeShaderBinary(ps);
 
+    // カラーフィルタ用テクスチャ.
+    {
+        a3d::TextureDesc desc = {};
+        desc.Dimension          = a3d::RESOURCE_DIMENSION_TEXTURE2D;
+        desc.Width              = g_pApp->GetWidth();
+        desc.Height             = g_pApp->GetHeight();
+        desc.DepthOrArraySize   = 1;
+        desc.Format             = a3d::RESOURCE_FORMAT_R8G8B8A8_UNORM;
+        desc.MipLevels          = 1;
+        desc.SampleCount        = 1;
+        desc.Layout             = a3d::RESOURCE_LAYOUT_OPTIMAL;
+        desc.Usage              = a3d::RESOURCE_USAGE_UNORDERED_ACCESS | a3d::RESOURCE_USAGE_SHADER_RESOURCE;
+        desc.InitState          = a3d::RESOURCE_STATE_UNORDERED_ACCESS;
+        desc.HeapType           = a3d::HEAP_TYPE_DEFAULT;
+
+        if (!g_pDevice->CreateTexture(&desc, &g_pFilteredTexture))
+        { return false; }
+
+        a3d::UnorderedAccessViewDesc uavDesc = {};
+        uavDesc.Dimension       = a3d::VIEW_DIMENSION_TEXTURE2D;
+        uavDesc.FirstElement    = 0;
+        uavDesc.ElementCount    = 1;
+        uavDesc.Format          = a3d::RESOURCE_FORMAT_R8G8B8A8_UNORM;
+        uavDesc.MipLevels       = 1;
+        uavDesc.MipSlice        = 0;
+
+        if (!g_pDevice->CreateUnorderedAccessView(g_pFilteredTexture, &uavDesc, &g_pFilteredUAV))
+        { return false; }
+
+        a3d::ShaderResourceViewDesc srvDesc = {};
+        srvDesc.Dimension       = a3d::VIEW_DIMENSION_TEXTURE2D;
+        srvDesc.FirstElement    = 0;
+        srvDesc.ElementCount    = 1;
+        srvDesc.Format          = a3d::RESOURCE_FORMAT_R8G8B8A8_UNORM;
+        srvDesc.MipLevels       = 1;
+        srvDesc.MipSlice        = 0;
+
+        if (!g_pDevice->CreateShaderResourceView(g_pFilteredTexture, &srvDesc, &g_pFilteredSRV))
+        { return false; }
+    }
+
+    {
+        auto size = a3d::RoundUp<uint32_t>( sizeof(ColorFilter), info.ConstantBufferMemoryAlignment );
+
+        a3d::BufferDesc desc = {};
+        desc.Size       = size;
+        desc.Stride     = size;
+        desc.InitState  = a3d::RESOURCE_STATE_GENERAL;
+        desc.Usage      = a3d::RESOURCE_USAGE_CONSTANT_BUFFER;
+        desc.HeapType   = a3d::HEAP_TYPE_UPLOAD;
+
+        a3d::ConstantBufferViewDesc viewDesc = {};
+        viewDesc.Offset = 0;
+        viewDesc.Range  = size;
+
+        for(auto i=0; i<2; ++i)
+        {
+            if (!g_pDevice->CreateBuffer(&desc, &g_pColorFilterBuffer[i]))
+            { return false; }
+
+            if (!g_pDevice->CreateConstantBufferView(g_pColorFilterBuffer[i], &viewDesc, &g_pColorFilterCBV[i]))
+            { return false; }
+
+            g_pCbFilter[i] = g_pColorFilterBuffer[i]->Map();
+        }
+    }
+
+    // カラーフィルタ用ディスクリプタセットレイアウト.
+    {
+        a3d::DescriptorSetLayoutDesc desc = {};
+        desc.EntryCount = 4;
+        desc.Entries[0].ShaderMask      = a3d::SHADER_MASK_CS;
+        desc.Entries[0].Type            = a3d::DESCRIPTOR_TYPE_SRV_T;
+        desc.Entries[0].ShaderRegister  = 0;
+        desc.Entries[0].BindLocation    = 0;
+
+        desc.Entries[1].ShaderMask      = a3d::SHADER_MASK_CS;
+        desc.Entries[1].Type            = a3d::DESCRIPTOR_TYPE_SMP;
+        desc.Entries[1].ShaderRegister  = 0;
+        desc.Entries[1].BindLocation    = 1;
+
+        desc.Entries[2].ShaderMask      = a3d::SHADER_MASK_CS;
+        desc.Entries[2].Type            = a3d::DESCRIPTOR_TYPE_UAV_T;
+        desc.Entries[2].ShaderRegister  = 0;
+        desc.Entries[2].BindLocation    = 2;
+
+        desc.Entries[3].ShaderMask      = a3d::SHADER_MASK_CS;
+        desc.Entries[3].Type            = a3d::DESCRIPTOR_TYPE_CBV;
+        desc.Entries[3].ShaderRegister  = 0;
+        desc.Entries[3].BindLocation    = 3;
+
+        if (!g_pDevice->CreateDescriptorSetLayout(&desc, &g_pColorFilterLayout))
+        { return false; }
+    }
+
+    // カラーフィルタ用パイプラインレイアウト.
+    {
+        a3d::ShaderBinary cs = {};
+        FixedSizeString csPath;
+        GetShaderPath("colorFilterCS", csPath);
+
+        if (!LoadShaderBinary(csPath.c_str(), cs))
+        { return false; }
+
+        a3d::ComputePipelineStateDesc desc = {};
+        desc.pLayout = g_pColorFilterLayout;
+        desc.CS      = cs;
+
+        if (!g_pDevice->CreateComputePipeline(&desc, &g_pColorFilterPipeline))
+        {
+            DisposeShaderBinary(cs);
+            return false;
+        }
+
+        DisposeShaderBinary(cs);
+    }
+
     // ビューポートの設定.
     g_Viewport.X        = 0.0f;
     g_Viewport.Y        = 0.0f;
@@ -749,9 +888,22 @@ void TermA3D()
         if (g_pConstantBuffer[i] != nullptr)
         { g_pConstantBuffer[i]->Unmap(); }
 
+        if (g_pColorFilterBuffer[i] != nullptr)
+        { g_pColorFilterBuffer[i]->Unmap(); }
+
         // 定数バッファの破棄.
         a3d::SafeRelease(g_pConstantBuffer[i]);
+
+        a3d::SafeRelease(g_pColorFilterCBV[i]);
+        a3d::SafeRelease(g_pColorFilterBuffer[i]);
     }
+
+    a3d::SafeRelease(g_pColorFilterLayout);
+    a3d::SafeRelease(g_pColorFilterPipeline);
+
+    a3d::SafeRelease(g_pFilteredSRV);
+    a3d::SafeRelease(g_pFilteredUAV);
+    a3d::SafeRelease(g_pFilteredTexture);
 
     // オフスクリーンビューを破棄.
     a3d::SafeRelease(g_pOffScreenTargetView);
@@ -827,6 +979,17 @@ void DrawA3D()
         memcpy(ptr, &g_Transform, sizeof(g_Transform));
     }
 
+    // 
+    {
+        auto desc =  g_pFilteredTexture->GetDesc();
+        ColorFilter res = {};
+        res.TargetWidth    = float(desc.Width);
+        res.TargetHeight   = float(desc.Height);
+        res.ColorMatrix    = CreateSepiaMatrix(g_SepiaTone);
+        auto ptr = static_cast<uint8_t*>(g_pCbFilter[idx]);
+        memcpy(ptr, &res, sizeof(res));
+    }
+
     // コマンドの記録を開始します.
     auto pCmd = g_pCommandList[idx];
     pCmd->Begin();
@@ -863,17 +1026,37 @@ void DrawA3D()
 
         // 三角形を描画します.
         pCmd->DrawInstanced(3, 1, 0, 0);
-
     }
 
     // オフスクリーンフレームバッファを解除します(バリア設定前に解除しておく必要があります).
     pCmd->EndFrameBuffer();
 
-
     // 読み込み用にバリアを設定します.
     pCmd->TextureBarrier(
         g_pOffScreenBuffer,
         a3d::RESOURCE_STATE_COLOR_WRITE,
+        a3d::RESOURCE_STATE_SHADER_READ);
+
+    // コンピュートシェーダでカラーフィルタ.
+    {
+        pCmd->SetPipelineState(g_pColorFilterPipeline);
+        pCmd->SetDescriptorSetLayout(g_pColorFilterLayout);
+
+        pCmd->SetView(0, g_pOffScreenTextureView);
+        pCmd->SetSampler(1, g_pSampler);
+        pCmd->SetView(2, g_pFilteredUAV);
+        pCmd->SetView(3, g_pColorFilterCBV[idx]);
+
+        auto desc = g_pFilteredTexture->GetDesc();
+        uint32_t threadX = (desc.Width + 7) / 8;
+        uint32_t threadY = (desc.Height + 7) / 8;
+
+        pCmd->DispatchCompute(threadX, threadY, 1);
+    }
+
+    pCmd->TextureBarrier(
+        g_pFilteredTexture,
+        a3d::RESOURCE_STATE_UNORDERED_ACCESS,
         a3d::RESOURCE_STATE_SHADER_READ);
 
     // 書き込み用のバリアを設定します.
@@ -917,11 +1100,11 @@ void DrawA3D()
     #if SAMPLE_IS_VULKAN || SAMPLE_IS_D3D12 || SAMPLE_IS_D3D11
         pCmd->SetView   (0, g_pConstantView[idx]);
         pCmd->SetSampler(1, g_pSampler);
-        pCmd->SetView   (2, g_pOffScreenTextureView);
+        pCmd->SetView   (2, g_pFilteredSRV);
     #else
         pCmd->SetView   (0, g_pConstantView[i]);
         pCmd->SetSampler(1, g_pSampler);
-        pCmd->SetView   (1, g_pOffScreenView);
+        pCmd->SetView   (1, g_pFilteredSRV);
     #endif
         pCmd->DrawIndexedInstanced(6, 1, 0, 0, 0);
     }
@@ -934,10 +1117,11 @@ void DrawA3D()
         {
             ImGui::Begin("Debug");
             ImGui::SetWindowPos(ImVec2(10.0f, 10.0f));
-            ImGui::SetWindowSize(ImVec2(400, 100));
+            ImGui::SetWindowSize(ImVec2(400, 120));
             ImGui::Text("%.1f FPS", ImGui::GetIO().Framerate);
             ImGui::SliderFloat("rotate speed", &g_RotateSpeed, 0.0f, 10.0f);
             ImGui::ColorEdit3("clear color", g_ClearColor);
+            ImGui::SliderFloat("sepia tone", &g_SepiaTone, 0.0f, 1.0f);
             ImGui::End();
         }
 
@@ -947,6 +1131,11 @@ void DrawA3D()
 
     // 表示用のバリアを設定する前に，フレームバッファの設定を解除する必要があります.
     pCmd->EndFrameBuffer();
+
+    pCmd->TextureBarrier(
+        g_pFilteredTexture,
+        a3d::RESOURCE_STATE_SHADER_READ,
+        a3d::RESOURCE_STATE_UNORDERED_ACCESS);
 
     // 表示用にバリアを設定します.
     pCmd->TextureBarrier(
@@ -1131,4 +1320,31 @@ void Resize( uint32_t w, uint32_t h, void* pUser )
     g_Scissor.Extent.Height = h;
 
     g_Prepare = true;
+}
+
+Mat4 CreateSepiaMatrix(float tone)
+{
+    const Vec3 kWhiteSRGB(0.298912f, 0.586611f, 0.114478f);
+    const Vec3 kSepia(0.941f, 0.784f, 0.569f);
+
+    return Mat4(
+        tone * kWhiteSRGB.x * kSepia.x + (1.0f - tone),
+        tone * kWhiteSRGB.y * kSepia.x,
+        tone * kWhiteSRGB.z * kSepia.x,
+        0.0f,
+
+        tone * kWhiteSRGB.x * kSepia.y,
+        tone * kWhiteSRGB.y * kSepia.y + (1.0f - tone),
+        tone * kWhiteSRGB.z * kSepia.y,
+        0.0f,
+
+        tone * kWhiteSRGB.x * kSepia.z,
+        tone * kWhiteSRGB.y * kSepia.z,
+        tone * kWhiteSRGB.z * kSepia.z + (1.0f - tone),
+        0.0f,
+
+        0.0f,
+        0.0f,
+        0.0f,
+        1.0f);
 }

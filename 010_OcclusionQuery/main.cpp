@@ -67,7 +67,6 @@ a3d::IRenderTargetView*     g_pColorView[2]         = {};       //!< ƒJƒ‰[ƒrƒ…
 a3d::ICommandList*          g_pCommandList[2]       = {};       //!< ƒRƒ}ƒ“ƒhƒŠƒXƒg‚Å‚·.
 a3d::IBuffer*               g_pConstantBuffer[2]    = {};       //!< ’è”ƒoƒbƒtƒ@‚Å‚·.
 a3d::IConstantBufferView*   g_pConstantView[2]      = {};       //!< ’è”ƒoƒbƒtƒ@ƒrƒ…[‚Å‚·.
-a3d::IDescriptorSet*        g_pDescriptorSet[2]     = {};       //!< ƒfƒBƒXƒNƒŠƒvƒ^ƒZƒbƒg‚Å‚·.
 a3d::Viewport               g_Viewport              = {};       //!< ƒrƒ…[ƒ|[ƒg‚Å‚·.
 a3d::Rect                   g_Scissor               = {};       //!< ƒVƒU[‹éŒ`‚Å‚·.
 a3d::IQueryPool*            g_pQueryPool[2]         = {};       //!< ƒNƒGƒŠƒv[ƒ‹‚Å‚·.
@@ -327,7 +326,6 @@ bool InitA3D()
     // ƒfƒBƒXƒNƒŠƒvƒ^ƒZƒbƒgƒŒƒCƒAƒEƒg‚ğ¶¬‚µ‚Ü‚·.
     {
         a3d::DescriptorSetLayoutDesc desc = {};
-        desc.MaxSetCount               = 2;
         desc.EntryCount                = 1;
         desc.Entries[0].ShaderMask     = a3d::SHADER_MASK_VS;
         desc.Entries[0].ShaderRegister = 0;
@@ -335,12 +333,6 @@ bool InitA3D()
 
         if (!g_pDevice->CreateDescriptorSetLayout(&desc, &g_pDescriptorSetLayout))
         { return false; }
-
-        for(auto i=0; i<2; ++i)
-        {
-            if (!g_pDescriptorSetLayout->CreateDescriptorSet(&g_pDescriptorSet[i]))
-            { return false; }
-        }
     }
 
     // ƒOƒ‰ƒtƒBƒbƒNƒXƒpƒCƒvƒ‰ƒCƒ“ƒXƒe[ƒg‚ğ¶¬‚µ‚Ü‚·.
@@ -493,9 +485,6 @@ void TermA3D()
 
         // ’è”ƒoƒbƒtƒ@‚Ì”jŠü.
         a3d::SafeRelease(g_pConstantBuffer[i]);
-
-        // ƒfƒBƒXƒNƒŠƒvƒ^ƒZƒbƒg‚Ì”jŠü.
-        a3d::SafeRelease(g_pDescriptorSet[i]);
     }
 
     // ƒpƒCƒvƒ‰ƒCƒ“ƒXƒe[ƒg‚Ì”jŠü.
@@ -577,7 +566,7 @@ void DrawA3D()
         pCmd->SetPipelineState(g_pPipelineState);
 
         // ƒfƒBƒXƒNƒŠƒvƒ^ƒZƒbƒg‚ğİ’è‚µ‚Ü‚·.
-        pCmd->SetDescriptorSet(g_pDescriptorSet[idx]);
+        pCmd->SetDescriptorSetLayout(g_pDescriptorSetLayout);
 
         // ƒrƒ…[ƒ|[ƒg‚ÆƒVƒU[‹éŒ`‚ğİ’è‚µ‚Ü‚·.
         // NOTE : ƒrƒ…[ƒ|[ƒg‚ÆƒVƒU[‹éŒ`‚Ìİ’è‚ÍC•K‚¸SetPipelineState() ‚ÌŒã‚Å‚ ‚é•K—v‚ª‚ ‚è‚Ü‚·.

@@ -379,7 +379,7 @@ bool InitA3D()
         desc.Entries[2].ShaderMask     = a3d::SHADER_MASK_PS;
         desc.Entries[2].ShaderRegister = 0;
         desc.Entries[2].BindLocation   = 2;
-        desc.Entries[2].Type           = a3d::DESCRIPTOR_TYPE_SRV;
+        desc.Entries[2].Type           = a3d::DESCRIPTOR_TYPE_SRV_T;
     #else
         a3d::DescriptorSetLayoutDesc desc = {};
         desc.MaxSetCount               = 2;
@@ -393,7 +393,7 @@ bool InitA3D()
         desc.Entries[1].ShaderMask     = a3d::SHADER_MASK_PIXEL;
         desc.Entries[1].ShaderRegister = 0;
         desc.Entries[1].BindLocation   = 0;
-        desc.Entries[1].Type           = a3d::DESCRIPTOR_TYPE_SRV;
+        desc.Entries[1].Type           = a3d::DESCRIPTOR_TYPE_SRV_T;
     #endif
 
         if (!g_pDevice->CreateDescriptorSetLayout(&desc, &g_pDescriptorSetLayout))
