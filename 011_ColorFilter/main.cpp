@@ -71,6 +71,12 @@ void TermA3D();
 void DrawA3D();
 void Resize(uint32_t w, uint32_t h, void* ptr);
 Mat4 CreateSepiaMatrix(float tone);
+Mat4 CreateGrayScaleMatrix(float value);
+Mat4 CreateHueMatrix(float hueRad);
+Mat4 CreateSaturationMatrix(float r, float g, float b);
+Mat4 CreateBrightnessMatrix(float value);
+Mat4 CreateContrastMatrix(float value);
+Mat4 CreateColorInvertMatrix();
 
 //-------------------------------------------------------------------------------------------------
 // Global Varaibles.
@@ -114,6 +120,12 @@ float                       g_ClearColor[4]         = {};       //!< クリア�
 float                       g_RotateSpeed           = 1.0f;     //!< 回転速度です.
 bool                        g_Prepare               = false;    //!< 準備が出来たらtrue.
 float                       g_SepiaTone             = 0.0f;
+float                       g_GrayScale             = 0.0f;
+float                       g_Hue                   = 0.0f;
+float                       g_Saturation            = 1.0f;
+float                       g_Brightness            = 1.0f;
+float                       g_Contrast              = 0.0f;
+bool                        g_ColorInvert           = false;
 void*                       g_pCbFilter[2]          = {};
 SampleAllocator             g_Allocator;                        //!< アロケータ.
 
@@ -985,7 +997,15 @@ void DrawA3D()
         ColorFilter res = {};
         res.TargetWidth    = float(desc.Width);
         res.TargetHeight   = float(desc.Height);
-        res.ColorMatrix    = CreateSepiaMatrix(g_SepiaTone);
+        res.ColorMatrix    = CreateSepiaMatrix(g_SepiaTone)
+            * CreateGrayScaleMatrix(g_GrayScale)
+            * CreateHueMatrix(g_Hue)
+            * CreateSaturationMatrix(g_Saturation, g_Saturation, g_Saturation)
+            * CreateBrightnessMatrix(g_Brightness)
+            * CreateContrastMatrix(g_Contrast);
+        if (g_ColorInvert)
+        { res.ColorMatrix = res.ColorMatrix * CreateColorInvertMatrix(); }
+
         auto ptr = static_cast<uint8_t*>(g_pCbFilter[idx]);
         memcpy(ptr, &res, sizeof(res));
     }
@@ -1116,13 +1136,20 @@ void DrawA3D()
         GuiMgr::GetInstance().SwapBuffers();
 
         {
+            ImGui::SetNextWindowPos(ImVec2(10.0f, 10.0f), ImGuiCond_Once);
+            ImGui::SetNextWindowSize(ImVec2(400, 260), ImGuiCond_Once);
+
             ImGui::Begin("Debug");
-            ImGui::SetWindowPos(ImVec2(10.0f, 10.0f));
-            ImGui::SetWindowSize(ImVec2(400, 120));
             ImGui::Text("%.1f FPS", ImGui::GetIO().Framerate);
             ImGui::SliderFloat("rotate speed", &g_RotateSpeed, 0.0f, 10.0f);
             ImGui::ColorEdit3("clear color", g_ClearColor);
             ImGui::SliderFloat("sepia tone", &g_SepiaTone, 0.0f, 1.0f);
+            ImGui::SliderFloat("gray scale", &g_GrayScale, 0.0f, 1.0f);
+            ImGui::SliderFloat("hue", &g_Hue, 0.0f, F_PI);
+            ImGui::SliderFloat("saturation", &g_Saturation, 0.0f, 5.0f);
+            ImGui::SliderFloat("brightness", &g_Brightness, 0.0f, 5.0f);
+            ImGui::SliderFloat("contrast", &g_Contrast, -1.0f, 1.0f);
+            ImGui::Checkbox("color invert", &g_ColorInvert);
             ImGui::End();
         }
 
@@ -1323,6 +1350,9 @@ void Resize( uint32_t w, uint32_t h, void* pUser )
     g_Prepare = true;
 }
 
+//-------------------------------------------------------------------------------------------------
+//      セピアカラー行列を生成します.
+//-------------------------------------------------------------------------------------------------
 Mat4 CreateSepiaMatrix(float tone)
 {
     const Vec3 kWhiteSRGB(0.298912f, 0.586611f, 0.114478f);
@@ -1348,4 +1378,126 @@ Mat4 CreateSepiaMatrix(float tone)
         0.0f,
         0.0f,
         1.0f);
+}
+
+//-------------------------------------------------------------------------------------------------
+//      グレースケール行列を生成します.
+//-------------------------------------------------------------------------------------------------
+Mat4 CreateGrayScaleMatrix(float value)
+{
+    const Vec3 kGrayScale(0.22015f, 0.706655f, 0.071330f);
+
+    return Mat4(
+        value * kGrayScale.x + (1.0f - value),
+        value * kGrayScale.y,
+        value * kGrayScale.z,
+        0.0f,
+
+        value * kGrayScale.x,
+        value * kGrayScale.y + (1.0f - value),
+        value * kGrayScale.z,
+        0.0f,
+
+        value * kGrayScale.x,
+        value * kGrayScale.y,
+        value * kGrayScale.z + (1.0f - value),
+        0.0f,
+
+        0.0f,
+        0.0f,
+        0.0f,
+        1.0f);
+}
+
+//-------------------------------------------------------------------------------------------------
+//      色相変換行列を生成します.
+//-------------------------------------------------------------------------------------------------
+Mat4 CreateHueMatrix(float hue)
+{
+    auto c = cosf(hue);
+    auto s = sinf(hue);
+
+    return Mat4(
+        0.213f + 0.787f * c - 0.213f * s,
+        0.715f - 0.715f * c - 0.715f * s,
+        0.072f - 0.072f * c + 0.928f * s,
+        0.0f,
+
+        0.213f - 0.213f * c + 0.143f * s,
+        0.715f + 0.285f * c + 0.140f * s,
+        0.072f - 0.072f * c - 0.283f * s,
+        0.0f,
+        
+        0.213f - 0.213f * c - 0.787f * s,
+        0.715f - 0.715f * c - 0.283f * s,
+        0.072f + 0.928f * c + 0.072f * s,
+        0.0f,
+        
+        0.0f,
+        0.0f,
+        0.0f,
+        1.0f);
+}
+
+//-------------------------------------------------------------------------------------------------
+//      彩度変換行列を生成します.
+//-------------------------------------------------------------------------------------------------
+Mat4 CreateSaturationMatrix(float r, float g, float b)
+{
+    return Mat4(
+        0.213f + 0.787f * r,
+        0.715f - 0.715f * g,
+        0.072f - 0.072f * b,
+        0.0f,
+
+        0.213f - 0.213f * r,
+        0.715f + 0.285f * g,
+        0.072f - 0.072f * b,
+        0.0f,
+
+        0.213f - 0.213f * r,
+        0.715f - 0.715f * g,
+        0.072f + 0.928f * b,
+        0.0f,
+
+        0.0f,
+        0.0f,
+        0.0f,
+        1.0f);
+}
+
+//-------------------------------------------------------------------------------------------------
+//      輝度変換行列を生成します.
+//-------------------------------------------------------------------------------------------------
+Mat4 CreateBrightnessMatrix(float value)
+{
+    return Mat4(
+        value, 0.0f, 0.0f, 0.0f,
+        0.0f, value, 0.0f, 0.0f,
+        0.0f, 0.0f, value, 0.0f,
+        0.0f, 0.0f, 0.0f,  1.0f);
+}
+
+//-------------------------------------------------------------------------------------------------
+//      コントラスト変換行列を生成します.
+//-------------------------------------------------------------------------------------------------
+Mat4 CreateContrastMatrix(float value)
+{
+    return Mat4(
+        1.0f + value, 0.0f, 0.0f, -0.5f * value,
+        0.0f, 1.0f + value, 0.0f, -0.5f * value,
+        0.0f, 0.0f, 1.0f + value, -0.5f * value,
+        0.0f, 0.0f, 0.0f, 1.0f);
+}
+
+//-------------------------------------------------------------------------------------------------
+//      色反転行列を生成します.
+//-------------------------------------------------------------------------------------------------
+Mat4 CreateColorInvertMatrix()
+{
+    return Mat4(
+        -1.0f,  0.0f,  0.0f,  1.0f,
+         0.0f, -1.0f,  0.0f,  1.0f,
+         0.0f,  0.0f, -1.0f,  1.0f,
+         0.0f,  0.0f,  0.0f,  1.0f);
 }
