@@ -1015,6 +1015,7 @@ void DrawA3D()
     {
         // パイプラインステートを設定します.
         pCmd->SetPipelineState(g_pOffScreenPipeline);
+        pCmd->SetDescriptorSetLayout(g_pOffScreenDSetLayout);
 
         // ビューポートとシザー矩形を設定します.
         // NOTE : ビューポートとシザー矩形の設定は，必ずSetPipelineState() の後である必要があります.
@@ -1042,13 +1043,13 @@ void DrawA3D()
         pCmd->SetPipelineState(g_pColorFilterPipeline);
         pCmd->SetDescriptorSetLayout(g_pColorFilterLayout);
 
-        pCmd->SetView(0, g_pOffScreenTextureView);
+        pCmd->SetView   (0, g_pOffScreenTextureView);
         pCmd->SetSampler(1, g_pSampler);
-        pCmd->SetView(2, g_pFilteredUAV);
-        pCmd->SetView(3, g_pColorFilterCBV[idx]);
+        pCmd->SetView   (2, g_pFilteredUAV);
+        pCmd->SetView   (3, g_pColorFilterCBV[idx]);
 
         auto desc = g_pFilteredTexture->GetDesc();
-        uint32_t threadX = (desc.Width + 7) / 8;
+        uint32_t threadX = (desc.Width  + 7) / 8;
         uint32_t threadY = (desc.Height + 7) / 8;
 
         pCmd->DispatchCompute(threadX, threadY, 1);
@@ -1084,6 +1085,7 @@ void DrawA3D()
     {
         // パイプラインステートを設定します.
         pCmd->SetPipelineState(g_pPipelineState);
+        pCmd->SetDescriptorSetLayout(g_pDescriptorSetLayout);
 
         // ビューポートとシザー矩形を設定します.
         // NOTE : ビューポートとシザー矩形の設定は，必ずSetPipelineState() の後である必要があります.
@@ -1095,7 +1097,6 @@ void DrawA3D()
         pCmd->SetIndexBuffer(g_pIndexBuffer, 0);
 
         // 矩形を描画.
-        pCmd->SetDescriptorSetLayout(g_pDescriptorSetLayout);
 
     #if SAMPLE_IS_VULKAN || SAMPLE_IS_D3D12 || SAMPLE_IS_D3D11
         pCmd->SetView   (0, g_pConstantView[idx]);
