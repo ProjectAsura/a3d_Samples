@@ -565,9 +565,6 @@ void DrawA3D()
         // パイプラインステートを設定します.
         pCmd->SetPipelineState(g_pPipelineState);
 
-        // ディスクリプタセットを設定します.
-        pCmd->SetDescriptorSetLayout(g_pDescriptorSetLayout);
-
         // ビューポートとシザー矩形を設定します.
         // NOTE : ビューポートとシザー矩形の設定は，必ずSetPipelineState() の後である必要があります.
         pCmd->SetViewports(1, &g_Viewport);

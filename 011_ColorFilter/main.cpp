@@ -1035,7 +1035,6 @@ void DrawA3D()
     {
         // パイプラインステートを設定します.
         pCmd->SetPipelineState(g_pOffScreenPipeline);
-        pCmd->SetDescriptorSetLayout(g_pOffScreenDSetLayout);
 
         // ビューポートとシザー矩形を設定します.
         // NOTE : ビューポートとシザー矩形の設定は，必ずSetPipelineState() の後である必要があります.
@@ -1061,7 +1060,6 @@ void DrawA3D()
     // コンピュートシェーダでカラーフィルタ.
     {
         pCmd->SetPipelineState(g_pColorFilterPipeline);
-        pCmd->SetDescriptorSetLayout(g_pColorFilterLayout);
 
         pCmd->SetView   (0, g_pOffScreenTextureView);
         pCmd->SetSampler(1, g_pSampler);
@@ -1105,7 +1103,6 @@ void DrawA3D()
     {
         // パイプラインステートを設定します.
         pCmd->SetPipelineState(g_pPipelineState);
-        pCmd->SetDescriptorSetLayout(g_pDescriptorSetLayout);
 
         // ビューポートとシザー矩形を設定します.
         // NOTE : ビューポートとシザー矩形の設定は，必ずSetPipelineState() の後である必要があります.

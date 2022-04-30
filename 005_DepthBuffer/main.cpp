@@ -569,12 +569,10 @@ void DrawA3D()
         pCmd->SetIndexBuffer(g_pIndexBuffer, 0);
 
         // 手前の三角形.
-        pCmd->SetDescriptorSetLayout(g_pDescriptorSetLayout);
         pCmd->SetView(0, g_pConstantView[idx * 2 + 0]);
         pCmd->DrawIndexedInstanced(6, 1, 0, 0, 0);
 
         // 奥側の三角形.
-        pCmd->SetDescriptorSetLayout(g_pDescriptorSetLayout);
         pCmd->SetView(0, g_pConstantView[idx * 2 + 1]);
         pCmd->DrawIndexedInstanced(6, 1, 0, 0, 0);
     }

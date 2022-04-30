@@ -500,9 +500,6 @@ void DrawA3D()
         // パイプラインステートを設定します.
         pCmd->SetPipelineState(g_pPipelineState);
 
-        // ディスクリプタセットレイアウトを設定します.
-        pCmd->SetDescriptorSetLayout(g_pDescriptorSetLayout);
-
         // 定数バッファを設定します.
         pCmd->SetView(0, g_pConstantView[idx]);
 

@@ -911,9 +911,6 @@ void DrawA3D()
         pCmd->SetVertexBuffers(0, 1, &g_pVertexBuffer, nullptr);
         pCmd->SetIndexBuffer(g_pIndexBuffer, 0);
 
-        // 矩形を描画.
-        pCmd->SetDescriptorSetLayout(g_pDescriptorSetLayout);
-
     #if SAMPLE_IS_VULKAN || SAMPLE_IS_D3D12 || SAMPLE_IS_D3D11
         pCmd->SetView   (0, g_pConstantView[idx]);
         pCmd->SetSampler(1, g_pSampler);
@@ -923,6 +920,8 @@ void DrawA3D()
         pCmd->SetSampler(1, g_pSampler);
         pCmd->SetView   (1, g_pOffScreenView);
     #endif
+
+        // 矩形を描画.
         pCmd->DrawIndexedInstanced(6, 1, 0, 0, 0);
     }
 

@@ -635,10 +635,9 @@ void GuiMgr::OnDraw()
         m_pIB[m_BufferIndex]->Unmap();
     }
 
-    // パイプラインステートとディスクリプタセット・ディスクリプタセットレイアウトを設定.
+    // パイプラインステートを設定.
     {
         m_pCommandList->SetPipelineState(m_pPipelineState);
-        m_pCommandList->SetDescriptorSetLayout(m_pDescriptorSetLayout);
 
     #if SAMPLE_IS_VULKAN || SAMPLE_IS_D3D12 || SAMPLE_IS_D3D11
         m_pCommandList->SetView   (0, m_pConstantView);
