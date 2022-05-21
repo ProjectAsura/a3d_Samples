@@ -6,11 +6,12 @@
 
 #include "a3dShader.hlsli"
 
-A3D_RESOURCE(Texture2D     ColorMap,  t0, 0);
-A3D_RESOURCE(SamplerState  ColorSmp,  s0, 1);
-A3D_RESOURCE(RWTexture2D<float4>    ResultMap, u0, 2);
+A3D_BINDING(0) Texture2D           ColorMap  : register(t0);
+A3D_BINDING(1) SamplerState        ColorSmp  : register(s0);
+A3D_BINDING(2) RWTexture2D<float4> ResultMap : register(u0);
 
-A3D_RESOURCE(cbuffer CbColorFilter, b0, 3)
+A3D_BINDING(3)
+cbuffer CbColorFilter : register(b0)
 {
     float2   TargetSize;
     uint2    Reserved;

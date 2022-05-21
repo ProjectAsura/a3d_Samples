@@ -1,5 +1,5 @@
 setlocal
-set SHADER_COMPILER="C:\Program Files (x86)\Windows Kits\10\bin\10.0.18362.0\x64\fxc.exe"
+set SHADER_COMPILER="C:\Program Files (x86)\Windows Kits\10\bin\10.0.19041.0\x64\fxc.exe"
 
 mkdir dxbc
 

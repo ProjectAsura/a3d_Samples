@@ -110,8 +110,8 @@ bool GuiMgr::Init(a3d::IDevice* pDevice, const TargetViewInfo& info, IApp* pApp)
         auto info = m_pDevice->GetInfo();
 
         a3d::BufferDesc desc = {};
-        desc.Size       = a3d::RoundUp<uint64_t>( sizeof(Mat4), info.ConstantBufferMemoryAlignment );
-        desc.Stride     = a3d::RoundUp<uint32_t>( sizeof(Mat4), info.ConstantBufferMemoryAlignment );
+        desc.Size       = a3d::RoundUp<uint64_t>( sizeof(Mat4), info.ConstantBufferAlignment );
+        desc.Stride     = a3d::RoundUp<uint32_t>( sizeof(Mat4), info.ConstantBufferAlignment );
         desc.InitState  = a3d::RESOURCE_STATE_GENERAL;
         desc.Usage      = a3d::RESOURCE_USAGE_CONSTANT_BUFFER;
         desc.HeapType   = a3d::HEAP_TYPE_UPLOAD;
@@ -268,17 +268,17 @@ bool GuiMgr::Init(a3d::IDevice* pDevice, const TargetViewInfo& info, IApp* pApp)
         a3d::DescriptorSetLayoutDesc desc = {};
         desc.EntryCount                = 3;
         
-        desc.Entries[0].ShaderMask     = a3d::SHADER_MASK_VS;
+        desc.Entries[0].ShaderStage    = a3d::SHADER_STAGE_VS;
         desc.Entries[0].ShaderRegister = 0;
         desc.Entries[0].BindLocation   = 0;
         desc.Entries[0].Type           = a3d::DESCRIPTOR_TYPE_CBV;
 
-        desc.Entries[1].ShaderMask     = a3d::SHADER_MASK_PS;
+        desc.Entries[1].ShaderStage    = a3d::SHADER_STAGE_PS;
         desc.Entries[1].ShaderRegister = 0;
         desc.Entries[1].BindLocation   = 1;
         desc.Entries[1].Type           = a3d::DESCRIPTOR_TYPE_SMP;
 
-        desc.Entries[2].ShaderMask     = a3d::SHADER_MASK_PS;
+        desc.Entries[2].ShaderStage    = a3d::SHADER_STAGE_PS;
         desc.Entries[2].ShaderRegister = 0;
         desc.Entries[2].BindLocation   = 2;
         desc.Entries[2].Type           = a3d::DESCRIPTOR_TYPE_SRV_T;
@@ -287,12 +287,12 @@ bool GuiMgr::Init(a3d::IDevice* pDevice, const TargetViewInfo& info, IApp* pApp)
         desc.MaxSetCount               = 2;
         desc.EntryCount                = 2;
         
-        desc.Entries[0].ShaderMask     = a3d::SHADER_MASK_VS;
+        desc.Entries[0].ShaderStage    = a3d::SHADER_STAGE_VS;
         desc.Entries[0].ShaderRegister = 0;
         desc.Entries[0].BindLocation   = 0;
         desc.Entries[0].Type           = a3d::DESCRIPTOR_TYPE_CBV;
 
-        desc.Entries[1].ShaderMask     = a3d::SHADER_MASK_PS;
+        desc.Entries[1].ShaderStage    = a3d::SHADER_STAGE_PS;
         desc.Entries[1].ShaderRegister = 0;
         desc.Entries[1].BindLocation   = 0;
         desc.Entries[1].Type           = a3d::DESCRIPTOR_TYPE_SRV_T;

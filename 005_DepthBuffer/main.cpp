@@ -293,7 +293,7 @@ bool InitA3D()
 
     // 定数バッファを生成.
     {
-        auto stride = a3d::RoundUp<uint32_t>( sizeof(Transform), info.ConstantBufferMemoryAlignment );
+        auto stride = a3d::RoundUp<uint32_t>( sizeof(Transform), info.ConstantBufferAlignment );
 
         a3d::BufferDesc desc = {};
         desc.Size       = stride * 2;
@@ -356,7 +356,7 @@ bool InitA3D()
     {
         a3d::DescriptorSetLayoutDesc desc = {};
         desc.EntryCount                = 1;
-        desc.Entries[0].ShaderMask     = a3d::SHADER_MASK_VS;
+        desc.Entries[0].ShaderStage    = a3d::SHADER_STAGE_VS;
         desc.Entries[0].ShaderRegister = 0;
         desc.Entries[0].Type           = a3d::DESCRIPTOR_TYPE_CBV;
 
