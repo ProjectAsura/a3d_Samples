@@ -9,6 +9,7 @@
 // Includes
 //-------------------------------------------------------------------------------------------------
 #include <cmath>
+#include <cassert>
 
 
 //-------------------------------------------------------------------------------------------------
@@ -808,5 +809,66 @@ struct Mat4
             value.row[0].y, value.row[1].y, value.row[2].y, value.row[3].y,
             value.row[0].z, value.row[1].z, value.row[2].z, value.row[3].z,
             value.row[0].w, value.row[1].w, value.row[2].w, value.row[3].w);
+    }
+
+    //---------------------------------------------------------------------------------------------
+    //! @brief      行列式を計算します.
+    //! 
+    //! @param[in]      value       行列です.
+    //! @return     行列式を返却します.
+    //---------------------------------------------------------------------------------------------
+    static float Determinant(const Mat4& value)
+    {
+        return
+            value.row[0].x * value.row[1].y * value.row[2].z * value.row[3].w + value.row[0].x * value.row[1].z * value.row[2].w * value.row[3].y +
+            value.row[0].x * value.row[1].w * value.row[2].y * value.row[3].z + value.row[0].y * value.row[1].x * value.row[2].w * value.row[3].z +
+            value.row[0].y * value.row[1].z * value.row[2].x * value.row[3].w + value.row[0].y * value.row[1].w * value.row[2].z * value.row[3].x +
+            value.row[0].z * value.row[1].x * value.row[2].y * value.row[3].w + value.row[0].z * value.row[1].y * value.row[2].w * value.row[3].x +
+            value.row[0].z * value.row[1].w * value.row[2].x * value.row[3].y + value.row[0].w * value.row[1].x * value.row[2].z * value.row[3].y +
+            value.row[0].w * value.row[1].y * value.row[2].x * value.row[3].z + value.row[0].w * value.row[1].z * value.row[2].y * value.row[3].x -
+            value.row[0].x * value.row[1].y * value.row[2].w * value.row[3].z - value.row[0].x * value.row[1].z * value.row[2].y * value.row[3].w -
+            value.row[0].x * value.row[1].w * value.row[2].z * value.row[3].y - value.row[0].y * value.row[1].x * value.row[2].z * value.row[3].w -
+            value.row[0].y * value.row[1].z * value.row[2].w * value.row[3].x - value.row[0].y * value.row[1].w * value.row[2].x * value.row[3].z -
+            value.row[0].z * value.row[1].x * value.row[2].w * value.row[3].y - value.row[0].z * value.row[1].y * value.row[2].x * value.row[3].w -
+            value.row[0].z * value.row[1].w * value.row[2].y * value.row[3].x - value.row[0].w * value.row[1].x * value.row[2].y * value.row[3].z -
+            value.row[0].w * value.row[1].y * value.row[2].z * value.row[3].x - value.row[0].w * value.row[1].z * value.row[2].x * value.row[3].y;
+    }
+
+    //---------------------------------------------------------------------------------------------
+    //! @brief      逆行列を求めます.
+    //! 
+    //! @param[in]      value       行列です.
+    //! @return     逆行列を返却します.
+    //---------------------------------------------------------------------------------------------
+    static Mat4 Invert(const Mat4& value)
+    {
+        auto det = Determinant(value);
+        assert(abs(det) <= FLT_EPSILON);
+
+        auto m11 = value.row[1].y*value.row[2].z*value.row[3].w + value.row[1].z*value.row[2].w*value.row[3].y + value.row[1].w*value.row[2].y*value.row[3].z - value.row[1].y*value.row[2].w*value.row[3].z - value.row[1].z*value.row[2].y*value.row[3].w - value.row[1].w*value.row[2].z*value.row[3].y;
+        auto m12 = value.row[0].y*value.row[2].w*value.row[3].z + value.row[0].z*value.row[2].y*value.row[3].w + value.row[0].w*value.row[2].z*value.row[3].y - value.row[0].y*value.row[2].z*value.row[3].w - value.row[0].z*value.row[2].w*value.row[3].y - value.row[0].w*value.row[2].y*value.row[3].z;
+        auto m13 = value.row[0].y*value.row[1].z*value.row[3].w + value.row[0].z*value.row[1].w*value.row[3].y + value.row[0].w*value.row[1].y*value.row[3].z - value.row[0].y*value.row[1].w*value.row[3].z - value.row[0].z*value.row[1].y*value.row[3].w - value.row[0].w*value.row[1].z*value.row[3].y;
+        auto m14 = value.row[0].y*value.row[1].w*value.row[2].z + value.row[0].z*value.row[1].y*value.row[2].w + value.row[0].w*value.row[1].z*value.row[2].y - value.row[0].y*value.row[1].z*value.row[2].w - value.row[0].z*value.row[1].w*value.row[2].y - value.row[0].w*value.row[1].y*value.row[2].z;
+
+        auto m21 = value.row[1].x*value.row[2].w*value.row[3].z + value.row[1].z*value.row[2].x*value.row[3].w + value.row[1].w*value.row[2].z*value.row[3].x - value.row[1].x*value.row[2].z*value.row[3].w - value.row[1].z*value.row[2].w*value.row[3].x - value.row[1].w*value.row[2].x*value.row[3].z;
+        auto m22 = value.row[0].x*value.row[2].z*value.row[3].w + value.row[0].z*value.row[2].w*value.row[3].x + value.row[0].w*value.row[2].x*value.row[3].z - value.row[0].x*value.row[2].w*value.row[3].z - value.row[0].z*value.row[2].x*value.row[3].w - value.row[0].w*value.row[2].z*value.row[3].x;
+        auto m23 = value.row[0].x*value.row[1].w*value.row[3].z + value.row[0].z*value.row[1].x*value.row[3].w + value.row[0].w*value.row[1].z*value.row[3].x - value.row[0].x*value.row[1].z*value.row[3].w - value.row[0].z*value.row[1].w*value.row[3].x - value.row[0].w*value.row[1].x*value.row[3].z;
+        auto m24 = value.row[0].x*value.row[1].z*value.row[2].w + value.row[0].z*value.row[1].w*value.row[2].x + value.row[0].w*value.row[1].x*value.row[2].z - value.row[0].x*value.row[1].w*value.row[2].z - value.row[0].z*value.row[1].x*value.row[2].w - value.row[0].w*value.row[1].z*value.row[2].x;
+
+        auto m31 = value.row[1].x*value.row[2].y*value.row[3].w + value.row[1].y*value.row[2].w*value.row[3].x + value.row[1].w*value.row[2].x*value.row[3].y - value.row[1].x*value.row[2].w*value.row[3].y - value.row[1].y*value.row[2].x*value.row[3].w - value.row[1].w*value.row[2].y*value.row[3].x;
+        auto m32 = value.row[0].x*value.row[2].w*value.row[3].y + value.row[0].y*value.row[2].x*value.row[3].w + value.row[0].w*value.row[2].y*value.row[3].x - value.row[0].x*value.row[2].y*value.row[3].w - value.row[0].y*value.row[2].w*value.row[3].x - value.row[0].w*value.row[2].x*value.row[3].y;
+        auto m33 = value.row[0].x*value.row[1].y*value.row[3].w + value.row[0].y*value.row[1].w*value.row[3].x + value.row[0].w*value.row[1].x*value.row[3].y - value.row[0].x*value.row[1].w*value.row[3].y - value.row[0].y*value.row[1].x*value.row[3].w - value.row[0].w*value.row[1].y*value.row[3].x;
+        auto m34 = value.row[0].x*value.row[1].w*value.row[2].y + value.row[0].y*value.row[1].x*value.row[2].w + value.row[0].w*value.row[1].y*value.row[2].x - value.row[0].x*value.row[1].y*value.row[2].w - value.row[0].y*value.row[1].w*value.row[2].x - value.row[0].w*value.row[1].x*value.row[2].y;
+
+        auto m41 = value.row[1].x*value.row[2].z*value.row[3].y + value.row[1].y*value.row[2].x*value.row[3].z + value.row[1].z*value.row[2].y*value.row[3].x - value.row[1].x*value.row[2].y*value.row[3].z - value.row[1].y*value.row[2].z*value.row[3].x - value.row[1].z*value.row[2].x*value.row[3].y;
+        auto m42 = value.row[0].x*value.row[2].y*value.row[3].z + value.row[0].y*value.row[2].z*value.row[3].x + value.row[0].z*value.row[2].x*value.row[3].y - value.row[0].x*value.row[2].z*value.row[3].y - value.row[0].y*value.row[2].x*value.row[3].z - value.row[0].z*value.row[2].y*value.row[3].x;
+        auto m43 = value.row[0].x*value.row[1].z*value.row[3].y + value.row[0].y*value.row[1].x*value.row[3].z + value.row[0].z*value.row[1].y*value.row[3].x - value.row[0].x*value.row[1].y*value.row[3].z - value.row[0].y*value.row[1].z*value.row[3].x - value.row[0].z*value.row[1].x*value.row[3].y;
+        auto m44 = value.row[0].x*value.row[1].y*value.row[2].z + value.row[0].y*value.row[1].z*value.row[2].x + value.row[0].z*value.row[1].x*value.row[2].y - value.row[0].x*value.row[1].z*value.row[2].y - value.row[0].y*value.row[1].x*value.row[2].z - value.row[0].z*value.row[1].y*value.row[2].x;
+
+        return Mat4(
+            m11 / det, m12 / det, m13 / det, m14 / det,
+            m21 / det, m22 / det, m23 / det, m24 / det,
+            m31 / det, m32 / det, m33 / det, m34 / det,
+            m41 / det, m42 / det, m43 / det, m44 / det );
     }
 };
