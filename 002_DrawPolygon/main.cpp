@@ -278,9 +278,6 @@ bool InitA3D()
         desc.RenderTargetCount  = 1;
         desc.RenderTarget[0]    = format;
 
-        // キャッシュ済みパイプラインステートの設定.
-        desc.pCachedPSO = nullptr;
-
         // グラフィックスパイプラインステートの生成.
         if (!g_pDevice->CreateGraphicsPipeline(&desc, &g_pPipelineState))
         {

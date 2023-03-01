@@ -351,8 +351,6 @@ bool GuiMgr::Init(a3d::IDevice* pDevice, const TargetViewInfo& info, IApp* pApp)
 
         // ブレンドステートの設定.
         desc.BlendState.IndependentBlendEnable          = false;
-        desc.BlendState.LogicOpEnable                   = false;
-        desc.BlendState.LogicOp                         = a3d::LOGIC_OP_NOOP;
         desc.BlendState.RenderTarget[0]                 = a3d::ColorBlendState::AlphaBlend();
         for(auto i=1; i<8; ++i)
         { desc.BlendState.RenderTarget[i] = a3d::ColorBlendState::Opaque(); }
@@ -401,9 +399,6 @@ bool GuiMgr::Init(a3d::IDevice* pDevice, const TargetViewInfo& info, IApp* pApp)
         for(auto i=0u; i<desc.RenderTargetCount; ++i)
         { desc.RenderTarget[i] = info.ColorTargets[i]; }
         desc.DepthTarget = info.DepthTarget;
-
-        // キャッシュ済みパイプラインステートの設定.
-        desc.pCachedPSO = nullptr;
 
         // グラフィックスパイプラインステートの生成.
         if (!m_pDevice->CreateGraphicsPipeline(&desc, &m_pPipelineState))

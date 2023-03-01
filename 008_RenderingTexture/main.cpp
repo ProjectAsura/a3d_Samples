@@ -437,8 +437,6 @@ bool InitA3D()
 
         // ブレンドステートの設定.
         desc.BlendState.IndependentBlendEnable          = false;
-        desc.BlendState.LogicOpEnable                   = false;
-        desc.BlendState.LogicOp                         = a3d::LOGIC_OP_NOOP;
         for(auto i=0; i<8; ++i)
         { desc.BlendState.RenderTarget[i] = a3d::ColorBlendState::Opaque(); }
 
@@ -485,9 +483,6 @@ bool InitA3D()
         desc.RenderTargetCount  = 1;
         desc.RenderTarget[0]    = format;
         desc.DepthTarget        = a3d::RESOURCE_FORMAT_D32_FLOAT;
-
-        // キャッシュ済みパイプラインステートの設定.
-        desc.pCachedPSO = nullptr;
 
         // グラフィックスパイプラインステートの生成.
         if (!g_pDevice->CreateGraphicsPipeline(&desc, &g_pPipelineState))
@@ -664,9 +659,6 @@ bool InitA3D()
         // フォーマットの設定.
         desc.RenderTargetCount  = 1;
         desc.RenderTarget[0]    = a3d::RESOURCE_FORMAT_R8G8B8A8_UNORM;
-
-        // キャッシュ済みパイプラインステートの設定.
-        desc.pCachedPSO = nullptr;
 
         // グラフィックスパイプラインステートの生成.
         if (!g_pDevice->CreateGraphicsPipeline(&desc, &g_pOffScreenPipeline))

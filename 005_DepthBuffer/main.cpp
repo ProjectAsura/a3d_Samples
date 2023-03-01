@@ -395,9 +395,6 @@ bool InitA3D()
         desc.RenderTarget[0]    = format;
         desc.DepthTarget        = a3d::RESOURCE_FORMAT_D32_FLOAT;
 
-        // キャッシュ済みパイプラインステートの設定.
-        desc.pCachedPSO = nullptr;
-
         // グラフィックスパイプラインステートの生成.
         if (!g_pDevice->CreateGraphicsPipeline(&desc, &g_pPipelineState))
         {
